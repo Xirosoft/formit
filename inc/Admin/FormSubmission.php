@@ -1,0 +1,330 @@
+<?php 
+namespace Xirosoft\Formit\Admin;
+use Xirosoft\Formit\Query;
+use Xirosoft\Formit\Admin\Exports\ExportCsv;
+
+class FormSubmission{
+    /**
+     * All action hook define construction function
+     */
+    function __construct(){
+        // For Submission page
+        add_action('admin_menu', [$this, 'add_custom_submenu_page']);
+
+        // Get Sumission Data
+        add_action('wp_ajax_get_submission_details', [$this, 'get_submission_details']);
+        add_action('wp_ajax_nopriv_get_submission_details', [$this, 'get_submission_details']);
+
+        // Seleted Item for this hook
+        add_action('wp_ajax_bulk_delete_submissions', [$this, 'bulk_delete_submissions']);
+        add_action('wp_ajax_nopriv_bulk_delete_submissions', [$this, 'bulk_delete_submissions']);
+
+        // Hook the delete_single_submission function to the WordPress AJAX action
+        add_action('wp_ajax_delete_single_submission', [$this, 'delete_single_submission']);
+        add_action('wp_ajax_nopriv_delete_single_submission', [$this, 'delete_single_submission']);
+
+        // Pageination hook
+        add_action('wp_ajax_update_items_per_page', [$this,  'update_items_per_page']);
+        add_action('wp_ajax_nopriv_update_items_per_page', [$this,  'update_items_per_page']);
+
+        new ExportCsv();
+
+    }
+    /**
+     * @add_custom_submenu_page function for new page adeded
+     * Ref to 'admin_menu' hook
+     * @return void
+     */
+    function add_custom_submenu_page() {
+        add_submenu_page(
+            'edit.php?post_type=formit', 
+            'Form Submission',
+            'Form Submission',
+            'manage_options',
+            'submission',
+            [$this, 'render_submission_page']
+        );
+    }
+    
+
+    function render_submission_page() {  
+        // Check if the user has the required permissions
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
+        global $wpdb;
+        
+        // Define the table name
+        $table_name = $wpdb->prefix . 'formit_submissions'; // Assuming your table prefix is 'wp_'
+        
+        // Default pagination parameters
+        if (isset($_COOKIE['itemsPerPage'])) {
+            $default_per_page = $_COOKIE['itemsPerPage'];
+        }else{
+            $default_per_page = 10;
+        }
+        
+        $per_page       = isset($_POST['items_per_page']) ? intval($_POST['items_per_page']) : $default_per_page;
+        $current_page   = isset($_GET['paged']) ? intval($_GET['paged']) : 1; // Use 'paged' query parameter for page number
+        
+        // Calculate the total number of rows without fetching all data
+        $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        
+        // Calculate the total number of pages based on the selected per-page limit
+        $total_pages = ceil($total_items / $per_page);
+        
+        // Ensure the current page is within valid bounds
+        $current_page = max(1, min($current_page, $total_pages));
+        
+        // Calculate the offset for the SQL query
+        $offset = ($current_page - 1) * $per_page;
+        
+        // Handle form submission to change per-page limit
+        if (isset($_POST['items_per_page'])) {
+            $per_page = intval($_POST['items_per_page']);
+            $current_page = 1; // Reset to the first page when changing per-page limit
+            $offset = 0; // Reset the offset
+        }
+        // Modify the query to retrieve a specific range of rows
+        $order_direction = 'DESC'; // You can change this to 'ASC' if needed
+        $query = "SELECT * FROM $table_name ORDER BY created_at $order_direction LIMIT $per_page OFFSET $offset";
+        $submissions = $wpdb->get_results($query, ARRAY_A);
+
+        
+        ?>
+        <!-- // Display filter options -->
+        <div class="wrap"  id="submission-table">
+            <?php if($total_items > 0) : ?>
+            <form method="post" class="smform-submisson-filter-form">
+                <div class="data_filter">
+                    <div class="bulk-actions">
+                        <select id="bulk-action">
+                            <option value=""><?php esc_html_e('Bulk Actions', 'formit'); ?></option>
+                            <option value="delete"><?php esc_html_e('Delete', 'formit'); ?></option>
+                        </select>
+                        <input type="submit" id="do-action" value="<?php esc_attr_e( 'Apply', 'formit' ) ?>" class="button button-primary">
+                    </div>
+                    <input type="text" id="filter-user-type" placeholder="<?php esc_attr_e( 'Type for serach', 'formit' ) ?>">
+                    <select id="filter-form-title">
+                        <option value=""><?php esc_html_e('Select Form Title', 'formit'); ?></option>
+                        <?php $this->populate_form_title_dropdown(); ?>
+                    </select>
+                    <input type="text" id="filter-location" placeholder="<?php esc_attr_e( 'Location', 'formit' ) ?>">
+                    <input type="date" id="filter-start-date" placeholder="<?php esc_attr_e( 'Start Date', 'formit' ) ?>">
+                    <input type="date" id="filter-end-date" placeholder="<?php esc_attr_e( 'End Date', 'formit' ) ?>">
+                    <input type="submit" value="<?php esc_attr_e( 'Apply Filters', 'formit' ) ?>" class="button button-primary">
+                </div>
+                <div class="total__mail"><?php echo esc_html__($total_items, 'formit'); ?></div>
+                <div class="export-meta">
+                    <button class="disabled" type="button" title="<?php esc_attr_e( 'Upcoming Export Excel', 'formit' ) ?>" id="export_excel">
+                        <img src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/excel.webp", 'formit' ) ?>" alt="excel" />
+                    </span>
+                    <button class="disabled" type="button" title="<?php esc_attr_e( 'Upcoming Export PDF', 'formit' ) ?>" id="export_pdf">
+                        <img src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/pdf.webp", 'formit' ) ?>" alt="pdf" />
+                    </span>
+                    <button type="button" title="<?php esc_attr_e( 'Export CSV', 'formit' ) ?>" id="export_csv">
+                        <img src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/csv.webp", 'formit' ) ?>" alt="csv" />
+                    </span>
+                </div>
+            </form>
+        
+            <!-- // Display the table -->
+            <div class="table-responsive">
+                <table class="widefat formit_data_table">
+                    <!-- // Table headers -->
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th class="sortable" data-column="form_name"><?php esc_html_e('Form Name', 'formit'); ?> </th>
+                            <th class="sortable" data-column="email"><?php esc_html_e('Email', 'formit'); ?> </th>
+                            <th class="sortable" data-column="date"><?php esc_html_e('Date and Time', 'formit'); ?> </th>
+                            <th class="sortable" data-column="location"><?php esc_html_e('Location', 'formit'); ?> </th>
+                            <th><?php esc_html_e('Action', 'formit'); ?></th>
+                        </tr>
+                    </thead>
+    
+                    <tbody>
+                        <?php 
+                            foreach ($submissions as $submission) : 
+                                $user_locationJson = $submission['user_location'];
+                                $mailBodyJson = $submission['mail_body'];
+                                $mailBodyJsoeDecode = json_decode($mailBodyJson, true);
+                                $userlocationJsoeDecode = json_decode($user_locationJson, true);
+                                $query = new Query;
+                            ?>
+                            <tr>
+                                <td><input type="checkbox" data-submission-id="<?php echo esc_attr($submission['id']); ?>"></td>
+                                <td><?php echo esc_html($submission['form_title']); ?></td>
+                                <td><?php echo esc_html($query->get_email_from_mail_body($mailBodyJsoeDecode)); ?></td>
+                                <td class="date-and-time"><?php echo esc_html($submission['created_at']); ?></td>
+                                <td><?php echo esc_html($userlocationJsoeDecode['country']); ?></td>
+                                <td>
+                                    <div class="action-meta-btn-group">
+                                        <a href="#" data-submission-id="<?php echo esc_attr($submission['id']); ?>" class="view-details"><i class="fi-view"></i></a>
+                                        <a href="#" data-submission-id="<?php echo esc_attr($submission['id']); ?>" class="edit-single disabled"><i class="fi-edit"></i></a>
+                                        <a href="#" data-submission-id="<?php echo esc_attr($submission['id']); ?>" class="delete-single"><i class="fi-trash"></i></a> 
+                                    </div>
+                                </td> 
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        
+            <div class="data-table-footer">
+                <form id="items-per-page-form" method="post">
+                    <label for="items-per-page"><?php esc_attr_e('Items Per Page:', 'formit'); ?></label>
+                    <input type="number" id="items-per-page" name="items_per_page" value="<?php esc_attr_e($per_page, 'formit'); ?>">
+                    <input type="submit" value="Apply" class="button button-primary">
+                </form>
+                <div class="pagination">
+                    <!-- // Display the number pagination controls -->
+                    <?php
+                        echo '<ul class="pagination">';
+                        if ($current_page > 1) {
+                            echo '<li><a href="' . admin_url('edit.php?post_type=formit&page=submission&paged=' . ($current_page - 1) . '&items_per_page=' . $per_page) . '" class="prev">Previous</a></li>';
+                        }
+                        for ($i = 1; $i <= $total_pages; $i++) {
+                            $active_class = ($i === $current_page) ? 'active' : '';
+                            echo '<li class="' . $active_class . '"><a href="' . admin_url('edit.php?post_type=formit&page=submission&paged=' . $i . '&items_per_page=' . $per_page) . '">' . $i . '</a></li>';
+                        }
+                        if ($current_page < $total_pages) {
+                            echo '<li><a href="' . admin_url('edit.php?post_type=formit&page=submission&paged=' . ($current_page + 1) . '&items_per_page=' . $per_page) . '" class="next">Next</a></li>';
+                        }
+                        echo '</ul>';
+                        ?>
+                </div>
+            </div>
+            <?php else: ?>
+                <div class="not-found-submmisions">
+                    <div class="not-found-data">
+                        <svg width="450" height="308" viewBox="0 0 450 308" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d)"><rect x="118" y="28" width="312" height="205" rx="10.1" fill="#fff"></rect></g><rect x="174" y="84" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="174" y="69" width="179.1" height="9.4" rx="4.7" fill="#9EA9B8" fill-opacity=".7"></rect><rect x="174" y="132.2" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="174" y="117" width="148" height="10" rx="5" fill="#9EA9B8" fill-opacity=".7"></rect><rect x="174" y="183.2" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="174" y="168.2" width="179.1" height="9.4" rx="4.7" fill="#9EA9B8" fill-opacity=".7"></rect><ellipse cx="137" cy="42.2" rx="4" ry="3.8" fill="#F54242"></ellipse><ellipse cx="151" cy="42.2" rx="4" ry="3.8" fill="#F8E434"></ellipse><ellipse cx="165" cy="42.2" rx="4" ry="3.8" fill="#ADD779"></ellipse><g filter="url(#filter1_d)"><rect x="25" y="62" width="312" height="205" rx="10.1" fill="#fff"></rect></g><rect x="81" y="118" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="81" y="103" width="179.1" height="9.4" rx="4.7" fill="#9EA9B8" fill-opacity=".7"></rect><rect x="81" y="166.2" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="81" y="151" width="148" height="10" rx="5" fill="#9EA9B8" fill-opacity=".7"></rect><rect x="81" y="217.2" width="202" height="15" rx="2" fill="#8F99A6" fill-opacity=".2"></rect><rect x="81" y="202.2" width="179.1" height="9.4" rx="4.7" fill="#9EA9B8" fill-opacity=".7"></rect><ellipse cx="44" cy="76.2" rx="4" ry="3.8" fill="#F54242"></ellipse><ellipse cx="58" cy="76.2" rx="4" ry="3.8" fill="#F8E434"></ellipse><ellipse cx="72" cy="76.2" rx="4" ry="3.8" fill="#ADD779"></ellipse><defs><filter id="filter0_d" x="93.6" y=".5" width="360.9" height="253.9" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"></feColorMatrix><feOffset dy="-3.1"></feOffset><feGaussianBlur stdDeviation="12.2"></feGaussianBlur><feColorMatrix values="0 0 0 0 0.164706 0 0 0 0 0.223529 0 0 0 0 0.294118 0 0 0 0.21 0"></feColorMatrix><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend><feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"></feBlend></filter><filter id="filter1_d" x=".6" y="34.5" width="360.9" height="253.9" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"></feColorMatrix><feOffset dy="-3.1"></feOffset><feGaussianBlur stdDeviation="12.2"></feGaussianBlur><feColorMatrix values="0 0 0 0 0.164706 0 0 0 0 0.223529 0 0 0 0 0.294118 0 0 0 0.21 0"></feColorMatrix><feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend><feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"></feBlend></filter></defs></svg>
+                        <h2><?php echo esc_html__('No Submission found','formit'); ?></h2>
+                       <p>
+                        <?php
+                        $route = new Route;
+                        printf(
+                            /* translators: %1$s: Start link HTML, %2$s: End link HTML, %3$s: Line break HTML */
+                            esc_html__( 'See the %1$sform documentation%2$s for instructions on publishing your form', 'formit' ),
+                            '<a href="'. esc_url($route->page_url('docs')) .'" target="_blank">',
+                            '</a>'
+                        );
+                        ?>
+                    </p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+        </div>
+        
+        <?php 
+    }
+
+
+
+    /**
+     * Hook the get_submission_details function to the WordPress AJAX action
+     *
+     * @return void
+     */
+    function get_submission_details() {
+        // Get the submission ID from the AJAX request
+        $submission_id = intval($_POST['submission_id']);
+    
+        // Fetch submission details from the database based on $submission_id
+        // Replace this with your actual database query
+        $submission_details = $this->get_submission_details_by_id($submission_id);
+    
+        // Format and return the details
+        // You can format the details as HTML or JSON, depending on your needs
+        wp_send_json($submission_details);
+        wp_die(); // Always include this to terminate the script properly
+    }
+    
+
+    function get_submission_details_by_id($submission_id) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'formit_submissions';
+        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $submission_id);
+        // Execute the query and fetch a single result
+        $result = $wpdb->get_row($query, ARRAY_A);
+    
+        return $result;
+    }
+    
+    function get_distinct_form_titles() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'formit_submissions';
+        $query = "SELECT DISTINCT form_title FROM $table_name";
+        // Execute the query and fetch results
+        $results = $wpdb->get_results($query, ARRAY_A);
+    
+        return $results;
+    }
+    
+    
+    /**
+     * Populate the Form Title dropdown
+     *
+     * @return void
+     */
+    function populate_form_title_dropdown() {
+        $form_titles = $this->get_distinct_form_titles();     
+        foreach ($form_titles as $title) {
+            echo '<option value="' . esc_attr($title['form_title']) . '">' . esc_html($title['form_title']) . '</option>';
+        }
+    }
+
+    /**
+     * Bulk Delete function
+     *
+     * @return void
+     */
+    function bulk_delete_submissions() {
+        global $wpdb;
+    
+        // Get the submission IDs to delete from the AJAX request
+        $submission_ids = $_POST['submission_ids'];
+        // Verify user capabilities (you can adjust this)
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'Permission denied.'));
+        }
+        // Delete the submissions from the database
+        $table_name = $wpdb->prefix . 'formit_submissions';
+        foreach ($submission_ids as $submission_id) {
+            $result = $wpdb->delete($table_name, array('id' => $submission_id), array('%d'));
+        }
+        if ($result === false) {
+            wp_send_json_error(array('message' => 'Error deleting submissions.'));
+        }
+        // Return success response
+        wp_send_json_success(array('message' => 'Submissions deleted successfully.'));
+    }
+    
+
+    function delete_single_submission() {
+        global $wpdb;
+    
+        // Get the submission ID to delete from the AJAX request
+        $submission_id = intval($_POST['submission_id']); 
+        // Verify user capabilities (you can adjust this)
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'Permission denied.'));
+        }
+        // Delete the submission from the database
+        $table_name = $wpdb->prefix . 'formit_submissions';
+        $result = $wpdb->delete($table_name, array('id' => $submission_id), array('%d'));
+        if ($result === false) {
+            wp_send_json_error(array('message' => 'Error deleting the submission.'));
+        }
+    
+        // Return success response
+        wp_send_json_success(array('message' => 'Submission deleted successfully.'));
+    }
+    
+
+    
+    
+
+}

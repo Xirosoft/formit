@@ -1,0 +1,19 @@
+p.wp-block-formit-formit-block{
+    color: green;
+    padding: 15px;
+    background-color: antiquewhite;
+}
+
+.formit-form.template-basic input[type=checkbox]+label,
+.formit-form.template-basic input[type=text]+label,
+.formit-form.template-basic input[type=email]+label,
+.formit-form.template-basic input[type=radio]+label{display:inline-block;width:initial}
+
+.formit-form.template-basic select{display:block;width:100%;padding:8px;font-size:1em;margin-bottom:1rem}
+.formit-form.template-basic input[type=submit],.formit-form.template-basic button[type=submit]{padding:8px 16px;font-size:1em;cursor:pointer}
+
+input{
+    display: block;
+    width: 100%;
+    background-color: blue;
+}

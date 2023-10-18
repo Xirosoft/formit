@@ -1,0 +1,26 @@
+{
+    "name": "xirosoft/formit-builder",
+    "description": "A Formit drag and drop streamlines complex online forms, aiding web developers and businesses by structuring data collection into user-friendly steps",
+    "type": "wordpress-plugin",
+    "license": "GPLv2",
+    "autoload": {
+        "psr-4": {
+            "Xirosoft\\Formit\\": "inc/"
+        },
+        "files": [ "inc/functions.php" ]
+    },
+    "authors": [
+        {
+            "name": "Shah Zobayer Ahmed",
+            "email": "shahzobayer@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+  
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    }
+    
+}

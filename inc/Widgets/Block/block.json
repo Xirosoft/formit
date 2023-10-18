@@ -1,0 +1,20 @@
+{  
+    
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "title": "Formit Form",
+    "name": "formit/formit-block",
+    "attributes": {
+        "content": {
+            "type": "string",
+            "selector": "p",
+            "default": "Hello World"
+        }
+    },
+
+    "category": "layout",
+    "icon": "formit-icon",
+    "editorScript": "file:./block.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

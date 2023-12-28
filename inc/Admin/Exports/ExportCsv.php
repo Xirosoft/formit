@@ -14,27 +14,24 @@ class ExportCsv
     /**
      * Hook the export_csv function to a custom admin-ajax endpoint
      *
-     * @return void
+     * @return object
      */
     function export_csv() {
+
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'formit-nonce' ) ){
+            wp_send_json_error(array(
+                'status' => '400',
+                'message' => 'Nonce verification failed'
+            ));
+        }
+
         $query = new Query;
         // Ensure the user has permission to export data
         if (!current_user_can('manage_options')) {
             wp_die('You do not have permission to export data.');
         }
-        // Get the full URL of the site
-        $site_url = site_url();
-
-        // Use parse_url to extract the host (domain name) from the URL
-        $host = parse_url($site_url, PHP_URL_HOST);
-
-        $min = 1;  // Minimum value
-        $max = 1000;  // Maximum value
-
-        $randomNumber = rand($min, $max);
-
         // Define CSV file name and headers
-        $filename = $host.'formit-submission-data-'.$randomNumber.'.csv';
+        $filename = 'form_submission_data.csv';
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
     
@@ -49,19 +46,17 @@ class ExportCsv
         fputcsv($output, $headers);
 
         // Fetch and format data from the 'wp_formit_submissions' table
-        // Replace this with your actual database query
-        $submissions = $query->get_submission_data(); // Replace with your function to fetch data
+        $submissions = $query->get_submission_data(); // Replace with your function to fetch data'
       
-        if ($submissions) {
+        if (is_array($submissions)) {
             foreach ($submissions as $submission) {
                 // Sanitize and format the data as needed
-                $user_locationJson = $submission['user_location'];
-                $mailBodyJson = $submission['mail_body'];
-                $userAgentJson = $submission['user_agent'];
-
-                $mailBodyJsoeDecode = json_decode($mailBodyJson, true);
-                $userlocationJsoeDecode = json_decode($user_locationJson, true);
-                $userAgentJsonJsoeDecode = json_decode($userAgentJson, true);    
+                $user_locationJson          = $submission['user_location'];
+                $mailBodyJson               = $submission['mail_body'];
+                $userAgentJson              = $submission['user_agent'];
+                $mailBodyJsoeDecode         = json_decode($mailBodyJson, true);
+                $userlocationJsoeDecode     = json_decode($user_locationJson, true);
+                $userAgentJsonJsoeDecode    = json_decode($userAgentJson, true);    
                 
                 $data = array(
                     sanitize_text_field($submission['form_title']),
@@ -77,8 +72,7 @@ class ExportCsv
         }
     
         // Close the file pointer
-        fclose($output);
-    
+        // fclose($output);
         // Prevent WordPress from rendering anything else
         exit;
     }

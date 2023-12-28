@@ -74,9 +74,11 @@ class FromBuilderHandle
      * @return void
      */
     public function view_data($where) {
-        // global $wpdb;
-        $query = $this->wpdb->prepare("SELECT * FROM {$this->table_name} WHERE user_id = %s", $where);
-        return  $this->wpdb->get_results($query);
+        global $wpdb;
+
+        $query = "SELECT * FROM %1s WHERE user_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return  $wpdb->get_results($wpdb->prepare($query, $this->table_name, $where), ARRAY_A);
     }
 
     /**
@@ -131,21 +133,16 @@ class FromBuilderHandle
             'msfrom_redirect' => 'Redirect field is required.',
         );
     
-        // Get and sanitize form data
-        $formData       = $_POST['formData'];
+
+        // Verify nonce before processing form data
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'formit-nonce' ) ) return;
+        
         $htmlData       = $_POST['htmlData'];
         $fromTemplate   = $_POST['fromTemplate'];
-        $jsonData       = json_encode($_POST['jsonData']); // Encode JSON data
-        parse_str($formData, $formFields);
-
-      
-        // // Validate each field
-        // foreach ($fieldErrors as $field => $errorMessage) {
-        //     if (empty($formFields[$field])) {
-        //         $errors[] = $errorMessage;
-        //     }
-        // }
-    
+        $jsonData       = wp_json_encode($_POST['jsonData']); // Encode JSON data
+        $decoded_data   = urldecode($_POST['formData']);
+        parse_str($decoded_data, $formFields);
+          
         if (!empty($errors)) {
             // If there are errors, return them as a JSON response
             wp_send_json(array('errors' => $errors));
@@ -163,17 +160,17 @@ class FromBuilderHandle
                 $author_name = get_the_author_meta('display_name', $author_id);
             }
     
-            $msfrom_popup_message       = $formFields['msfrom_popup_message'];
-            $msfrom_external_url        = $formFields['msfrom_external_url'];
-            $msfrom__internal_page      = $formFields['msfrom__internal_page'];
-            $formit_mail_to             = $formFields['formit_mail_to'];
-            $mail_cc                    = $formFields['mail_cc'];
-            $mail_bcc                   = $formFields['mail_bcc'];
-            $formit_sender_mail         = $formFields['formit_sender_mail'];
-            $msfrom_mail_subject        = $formFields['msfrom_mail_subject'];
-            $formit_mail_headers        = $formFields['formit_mail_additional_headers'];
-            $formit_mail_body           = $formFields['formit_mail_body'];
-            $msfrom_redirect            = $formFields['msfrom_redirect'];
+            $msfrom_popup_message       = sanitize_text_field($formFields['msfrom_popup_message']);
+            $msfrom_external_url        = esc_url_raw($formFields['msfrom_external_url']);
+            $msfrom__internal_page      = esc_url_raw($formFields['msfrom__internal_page']);
+            $formit_mail_to             = sanitize_email($formFields['formit_mail_to']);
+            $mail_cc                    = sanitize_email($formFields['mail_cc']);
+            $mail_bcc                   = sanitize_email($formFields['mail_bcc']);
+            $formit_sender_mail         = sanitize_email($formFields['formit_sender_mail']);
+            $msfrom_mail_subject        = sanitize_text_field($formFields['msfrom_mail_subject']);
+            $formit_mail_headers        = sanitize_text_field($formFields['formit_mail_additional_headers']);
+            $formit_mail_body           = wp_kses_post($formFields['formit_mail_body']);
+            $msfrom_redirect            = esc_url_raw($formFields['msfrom_redirect']);
         
                
             if(empty($msfrom_popup_message)){
@@ -220,9 +217,9 @@ class FromBuilderHandle
             
             // Encode the updated array back to JSON
             // Separate the form field data into two JSON objects
-            $status_messages_data = json_encode(array_slice($formFields, 24, 22)); // First 22 fields
-            // $formit_settings = json_encode(array_slice($formFields, 46, 8)); // Remaining fields
-            $updated_mail_config = json_encode($mail_config_array, JSON_PRETTY_PRINT);
+            $status_messages_data = wp_json_encode(array_slice($formFields, 24, 22)); // First 22 fields
+            
+            $updated_mail_config = wp_json_encode($mail_config_array, JSON_PRETTY_PRINT);
     
             // Define data to insert or update
             $data_to_insert = array(
@@ -240,9 +237,9 @@ class FromBuilderHandle
     
             global $wpdb;
             $this->table_name = $wpdb->prefix . 'formit_forms';
-    
-            $update_query = $wpdb->prepare("SELECT * FROM {$this->table_name} WHERE post_id = %d", $postId);
-            $existing_data = $wpdb->get_row($update_query);
+            $query = "SELECT * FROM %1s WHERE post_id = %d";
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $existing_data = $wpdb->get_row($wpdb->prepare($query,$this->table_name, $postId));
     
             $table_name = $wpdb->prefix . 'posts';
             $wp_title = $formFields['post_title'];
@@ -266,9 +263,10 @@ class FromBuilderHandle
                     $postId,
                     $meta_key
                 );
-
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($sql_meta);
                 $sql = "UPDATE $table_name SET post_status = 'publish', post_title = %s WHERE ID = %d";
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($wpdb->prepare($sql, $wp_title, $postId));
                 
                 wp_send_json(array('success' => 'Form Updated'));
@@ -282,13 +280,25 @@ class FromBuilderHandle
                     $postId,
                     $meta_key
                 );
-
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($sql_meta);
 
                 $sql = "UPDATE $table_name SET post_status = 'publish', post_title = %s WHERE ID = %d";
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($wpdb->prepare($sql, $wp_title, $postId));
                 wp_send_json(array('success' => 'From Created', 'home_url' => stripslashes(home_url())));
             }
+        }
+    }
+
+    public function formit_form_settings($post_id){
+        if($post_id){
+            global $wpdb;
+            $this->table_name = $wpdb->prefix . 'formit_forms';
+            $query = "SELECT * FROM %1s WHERE post_id = %d";
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $existing_form_configs = $wpdb->get_row($wpdb->prepare($query,$this->table_name, $post_id));
+            return $existing_form_configs->form_configs;
         }
     }
 }

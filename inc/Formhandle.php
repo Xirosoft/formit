@@ -2,6 +2,7 @@
 // Enqueue assets
 namespace Xirosoft\Formit;
 use Xirosoft\Formit\Utils\VisitorInfo;
+use Xirosoft\Formit\Api\TrafficLocation;
 
 class Formhandle{
     private $wpdb;
@@ -12,7 +13,7 @@ class Formhandle{
     public function __construct($ip = null){
         global $wpdb;
         $this->wpdb = $wpdb;
-        new API\TrafficLocation();
+        new TrafficLocation;
         $this->table_name = $wpdb->prefix . 'formit_submissions'; // Replace 'ms_form_data' with your custom table name
         $this->data_format = array(
             '%s', // 'mail_body' is a string
@@ -29,8 +30,8 @@ class Formhandle{
             '%s', // 'updated_at' is a string (datetime)
         );
 
-        add_action('wp_ajax_msfrom_submit_ajax_function', [$this, 'msfrom_submit_ajax_function']);
-        add_action('wp_ajax_nopriv_msfrom_submit_ajax_function', [$this, 'msfrom_submit_ajax_function']); // For non-authenticated users
+        add_action('wp_ajax_formit_submit_ajax_function', [$this, 'formit_submit_ajax_function']);
+        add_action('wp_ajax_nopriv_formit_submit_ajax_function', [$this, 'formit_submit_ajax_function']); // For non-authenticated users
 
     }
 
@@ -79,7 +80,7 @@ class Formhandle{
         return $replacedString;
     }
     
-    function msfrom_submit_ajax_function() {
+    function formit_submit_ajax_function() {
         $visitorInfo = new VisitorInfo;
 
         // Grub and formation our formData
@@ -89,18 +90,24 @@ class Formhandle{
 
         global $wpdb;
         $query      = new Query();
-        $formData   = sanitize_text_field($_POST['data']);
-        $form_id    = sanitize_text_field($_POST['data'][0]['value']); // Form ID get
-        $post_id    = sanitize_text_field($_POST['data'][1]['value']); //post id
-        $form_name  = sanitize_text_field($_POST['data'][2]['value']); // form name
+        if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
+            $formData   = $_POST['data'];
+            $form_id    = $_POST['data'][0]['value']; // Form ID get
+            $post_id    = $_POST['data'][1]['value']; //post id
+            $form_name  = $_POST['data'][2]['value']; // form name
+        } else {
+            echo 'Nonce verification failed. Please try again.';
+        }
+        
         $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'ms_form_data' with your custom table name
-        $query      = $wpdb->prepare("SELECT * FROM {$table_name} WHERE id = %s", $form_id);
-        $get_mail_settings_data =  $wpdb->get_results($query);
-        $data =  json_decode($get_mail_settings_data[0]->form_status_messages);
+        $query = "SELECT * FROM %1s WHERE id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $get_mail_settings_data =  $wpdb->get_results($wpdb->prepare($query,$table_name, $form_id));
+        $data       =  json_decode($get_mail_settings_data[0]->form_status_messages);
      
-        $jsonData = json_encode($formData); // Encode JSON data
+        $jsonData   = wp_json_encode($formData); // Encode JSON data
         $trafficLocation = new API\TrafficLocation();
-        $trafficLocationJson = json_encode($trafficLocation->getLocation()); // Encode JSON data
+        $trafficLocationJson = wp_json_encode($trafficLocation->getLocation()); // Encode JSON data
 
         // Define data to insert or update
         $data_to_insert = array(
@@ -134,9 +141,9 @@ class Formhandle{
         $mail_html = '<table>';
         foreach($formData as $key => $input) {
             if($formData[$key - 1]['name'] == $input['name']) {
-                $mail_html .= '<tr><td>'. esc__html( $input['label'], 'formit' )  .'</td><td>'. esc__html( $input['value']. ' added', 'formit' ) .'</td></tr>';
+                $mail_html .= '<tr><td>'. $input['label'] .'</td><td>'. $input['value'] .' added </td></tr>';
             } else {
-                $mail_html .= '<tr><td>'. esc__html( $input['label'], 'formit' ) .'</td><td>'. esc__html( $input['value'], 'formit' ) .'</td></tr>';
+                $mail_html .= '<tr><td>'. $input['label'] .'</td><td>'. $input['value'] .'</td></tr>';
             } 
         }
         $mail_html .= '</table>';
@@ -168,14 +175,14 @@ class Formhandle{
                 $result = $this->insert_data($data_to_insert);
                 if($result) {
                     wp_send_json_success(array(
-                        'message'=> __('Mail sent successfully done!'),
+                        'message'=> 'Mail sent successfully done!_',
                         'config' => $get_mail_settings_data[0]
                     ));
                 }
             }
             
             wp_send_json_success(array(
-                'message'=> __('Mail sent successfully done!'),
+                'message'=> 'Mail sent successfully done!',
                 'config' => $get_mail_settings_data[0]
             ));
         } else {
@@ -188,11 +195,11 @@ class Formhandle{
     function mail_sender($subject=null, $body=null, $from=null, $to=null, $cc=null, $bcc=null, $headers=null) {
         // set default data in function param
         empty($subject) 
-            ? $subject = __('Formit Form Submission') 
+            ? $subject = 'Formit Form Submission' 
             : $subject;
             
         empty($body) 
-            ? $body = __('Formit Form Submission body is empty') 
+            ? $body = 'Formit Form Submission body is empty' 
             : $body;
     
         empty($to) 
@@ -205,15 +212,16 @@ class Formhandle{
     
         // INSERT From emails into headers array
         // ecpectation data: array('Sender Name', 'sender@mail.com') or 'sender@mail.com'
-        if(!empty($from)) {
-            if(is_arry($from)) {
-                $headers[] = 'From: ' .$from[0]. ' <' .$from[1]. '>';
+        if (!empty($from)) {
+            if (is_array($from)) {
+                $headers[] = 'From: ' . $from[0] . ' <' . $from[1] . '>';
             } else {
-                $headers[] = 'From: ' .get_bloginfo('name'). ' <' .$from[1]. '>';
+                $headers[] = 'From: ' . get_bloginfo('name') . ' <' . $from . '>';
             }
         } else {
             $headers[] = 'From: Formit <formit@xirosoft.com>';
         }
+
     
         // INSERT Cc emails into headers array
         // ecpectation data: array('info@mail.com', 'user@mail.com')

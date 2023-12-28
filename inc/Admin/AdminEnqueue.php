@@ -6,7 +6,7 @@ class AdminEnqueue{
     function __construct(){
         add_action('admin_enqueue_scripts', [$this, 'enqueue_dashboard_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'BuilderFormaData']);
-        add_action('admin_enqueue_scripts', [$this, 'msfrom_ajax_localie']);
+        add_action('admin_enqueue_scripts', [$this, 'formit_ajax_localie']);
     }
     
     function enqueue_dashboard_scripts($hook) {
@@ -51,26 +51,18 @@ class AdminEnqueue{
 
     /**
      * Ajax Data localize function
-     * Retrieve the API token and pass it to the script
+     * Retrieve the API token and pass it to the script 
      * @return void
      */
-    function msfrom_ajax_localie(){
+    function formit_ajax_localie(){
         wp_localize_script('formit-admin-scripts', 'formit_ajax_localize', array(
             'site_url'  => site_url(),
             'plugin_url'=> FORMIT_URL,
             'ajax_url'  => admin_url('admin-ajax.php'),
-            'nonce'     => wp_create_nonce('msfrom-nonce')
+            'nonce'     => wp_create_nonce('formit-nonce')
         ));
         
     }
-
-    function json_localize(){
-        return 'Hello World';
-    }
-    
-    
-    
-
 }
 
 

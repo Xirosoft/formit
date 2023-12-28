@@ -93,6 +93,8 @@ class ElementorWidget extends Widget_Base{
     
     // Render the widget's content
     protected function render() {
+        // call load widget script
+		$this->load_widget_script();
         static $data=0;
         $settings = $this->get_settings();
         if(!empty($settings['formit_id'])){
@@ -102,5 +104,48 @@ class ElementorWidget extends Widget_Base{
             echo '</div>';  
         }
         $data++;
+    }
+
+    public function load_widget_script(){
+        if( \Elementor\Plugin::$instance->editor->is_edit_mode() === true  ) {
+            ?>
+            <script>
+                ( function( $ ){
+                    function formitDomMerge() {
+                        console.log('yyy');
+                        var mergedContent = {};
+
+                        // Iterate through elements with a specific class or attribute
+                        $(".rendered-form .row").each(function() {
+                            var id = $(this).attr("id");
+                            var content = $(this).html();
+
+                            // Store or merge the content based on ID
+                            if (mergedContent[id]) {
+                                mergedContent[id] += content;
+                            } else {
+                                mergedContent[id] = content;
+                            }
+                        });
+
+                        // Clear existing elements
+                        $(".rendered-form").empty();
+
+                        // Rebuild the DOM with merged content
+                        for (var id in mergedContent) {
+                            $("<div>")
+                                .attr("id", id)
+                                .addClass("row")
+                                .html(mergedContent[id])
+                                .appendTo(".rendered-form");
+                        }
+                    }
+
+                    formitDomMerge()
+
+                })(jQuery);
+            </script>
+            <?php 
+        }
     }
 }

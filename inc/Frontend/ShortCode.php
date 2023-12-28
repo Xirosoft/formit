@@ -14,8 +14,8 @@ class ShortCode
          * @shortcode_formit_builder
          */
         add_shortcode('formit',[$this, 'shortcode_formit_builder']);
-
     }
+
     /* 
     * Shortcode Builder 
     * 
@@ -24,12 +24,12 @@ class ShortCode
         // Get the post ID from the shortcode attributes
         $post_id = isset($atts['id']) ? intval($atts['id']) : null;
         // Get Data with Post ID
-        // Check if a valid post ID is provided
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'your_custom_table' with your actual table name
-        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE post_id = %d", $post_id);
-        $result = $wpdb->get_row($query);
+        $query = "SELECT * FROM %1s WHERE post_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $result = $wpdb->get_row($wpdb->prepare($query,$table_name, $post_id));
     
         if ($post_id !== null &&  $result !==  null) {
             // Retrieve the content of the 'formit' post
@@ -49,11 +49,11 @@ class ShortCode
 
             } else {
                 // Post not found or not of the correct type
-                return __('Invalid or missing Shortcode.', 'msfom');
+                return __('Invalid or missing Shortcode.', 'formit');
             }
         } else {
             // No post ID provided
-            return __('Please provide a valid form Shortcode This shorcode remove/delete.', 'msfom');
+            return __('Please provide a valid form Shortcode This shorcode remove/delete.', 'formit');
         }
 
     }

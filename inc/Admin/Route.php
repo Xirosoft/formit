@@ -12,7 +12,6 @@ final class Route
         $page_slug = '/wp-admin/edit.php?post_type=formit&page='.$url_slug;
         return $page_slug;
     }
-    
     public function page_url($url_slug){
         $page_url =  home_url('/wp-admin/edit.php?post_type=formit&page='.$url_slug);
         return $page_url;

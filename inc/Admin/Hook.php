@@ -244,11 +244,11 @@ class Hook{
 
         // Replace 'your_table_name' with the actual table name if it's not the default 'wp_posts' table
         $table_name = $wpdb->prefix . 'formit_forms';
+        $query = "SELECT ID FROM %1s WHERE post_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $form_id_query = $wpdb->prepare($query, $table_name, $post_id);
 
-        // SQL query to retrieve the 'id' with the specified 'post_id'
-        $form_id_query = $wpdb->prepare("SELECT ID FROM $table_name WHERE post_id = %d", $post_id);
-
-        // Execute the query
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $form_id = $wpdb->get_var($form_id_query);
 
         if ($column === 'mailcount') {

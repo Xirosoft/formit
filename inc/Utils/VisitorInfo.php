@@ -49,7 +49,7 @@ namespace Xirosoft\Formit\Utils;
         }
     
         // Convert the associative array to JSON and return it
-        return json_encode($user_agent_info);
+        return wp_json_encode($user_agent_info);
     }
 
     /**
@@ -58,15 +58,22 @@ namespace Xirosoft\Formit\Utils;
      * @return void
      */
     public function getPublicIp() {
-        $publicIp = file_get_contents('https://api.ipify.org?format=json');
-        $publicIpData = json_decode($publicIp);
+        $api_url = 'https://api.ipify.org?format=json';
 
-        if ($publicIpData && isset($publicIpData->ip)) {
-            return $publicIpData->ip;
-        } else {
-            return _e("Unable to determine your public IP address.");
+        $response = wp_remote_get($api_url);
+
+        if (!is_wp_error($response) && $response['response']['code'] === 200) {
+            $body = wp_remote_retrieve_body($response);
+            $publicIpData = json_decode($body);
+
+            if ($publicIpData && isset($publicIpData->ip)) {
+                return $publicIpData->ip;
+            }
         }
+
+        return _e("Unable to determine your public IP address.");
     }
+
 
     /**
      * Get Refer page function

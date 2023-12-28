@@ -14,16 +14,9 @@ function fromit_get_forms($args = array()) {
     // Merge the provided arguments with the default options
     $args       = wp_parse_args($args, $defaults);
     $table_name = $wpdb->prefix . 'formit_forms';
-    // SQL query to select rows from the custom table with pagination and order
-    $sql = $wpdb->prepare(
-        "SELECT * FROM {$table_name}
-        ORDER BY {$args['orderby']} {$args['order']}
-        LIMIT %d, %d",
-        $args['offset'], $args['number']
-    );
-
-    // Use $wpdb->get_results to execute the query and retrieve the data
-    $results = $wpdb->get_results($sql);
+    $query = "SELECT * FROM %1s ORDER BY %2s %3s LIMIT %d, %d";
+    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    $results = $wpdb->get_results($wpdb->prepare($query, $table_name, $args['orderby'], $args['order'], $args['offset'], $args['number']));
 
     // Check if there are results
     if ($results) {
@@ -46,9 +39,10 @@ function formit_forms_count() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'formit_forms';
     $count = wp_cache_get( 'count', 'address' );
-
+    $query = "SELECT count(id) FROM %1s";
     if ( false === $count ) {
-        $count = (int) $wpdb->get_var( "SELECT count(id) FROM {$table_name}" );
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $count = (int) $wpdb->get_var($wpdb->prepare($query, $table_name) );
 
         wp_cache_set( 'count', $count, 'address' );
     }

@@ -11,7 +11,6 @@ class SettingConfig{
     private $existing_data;
 
     function __construct(){
-
         add_action('wp_ajax_form_settings_data', [$this, 'form_settings_data']);
         add_action('wp_ajax_nopriv_form_settings_data', [$this, 'form_settings_data']); // For non-logged-in users
 
@@ -20,7 +19,9 @@ class SettingConfig{
        
         $this->table_name = $wpdb->prefix . 'formit_settings'; // Replace 'ms_form_data' with your custom table name
         $this->query = new Query();
-        $this->existing_data =  $this->wpdb->get_row("SELECT * FROM {$this->table_name}");
+        $query = "SELECT * FROM %1s";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $this->existing_data =  $this->wpdb->get_row($wpdb->prepare($query, $this->table_name));
         $this->where = array('id' => $this->existing_data->id);
         $this->data_format = array(
             '%s', // 'post_id' is a string
@@ -32,9 +33,24 @@ class SettingConfig{
      
     }
 
+    /**
+     * Form Settings Data
+     *
+     * @return void
+     */
     function form_settings_data(){
-        $formData = $_POST['formData'];
-        parse_str($formData, $formFields);
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'formit-nonce' ) ){
+            wp_send_json_error(array(
+                'status' => '400',
+                'message' => 'Nonce verification failed'
+            ));
+        }
+        
+
+        $formData = wp_json_encode($_POST['formData']);
+        parse_str(str_replace(array("'", "\""), '', $formData), $formFields);
+
+        // wp_send_json('Hello');
         
         // Define data to insert or update
         $data_to_insert = array(
@@ -67,12 +83,11 @@ class SettingConfig{
         } else {
             // Data exists, update it
             $updated_data = array(
-                'form_settings' => json_encode($formFields),
+                'form_settings' => wp_json_encode($formFields),
                 'updated_at' => current_time('mysql'),
             );
             // Define the WHERE clause to identify the existing record (you might need to adjust this based on your table structure)
             $where = array('id' => $this->existing_data->id);
-            // wp_send_json($updated_data);
             // Update the data
             $this->query->update_data( $this->table_name, $updated_data, $where);
             wp_send_json(array('success' => 'Settings have been updated!'));
@@ -88,7 +103,7 @@ class SettingConfig{
     function Setting_Tab(){
         // Default SettingsArray
         $pre_defined_settings = array(
-            'form_option_checkbox-group' => true,
+            'form_option_checkbox-group' => false,
             'form_option_date' => false,
             'form_option_files' => false,
             'form_option_header' => false,
@@ -114,11 +129,8 @@ class SettingConfig{
         // user's modified settingsArray
         $user_defined_settings = $this->form_settings_config_data();
 
-        
-
         // Update the SettingsArray
         $SettingsArray = $this->update_settings_data($pre_defined_settings, $user_defined_settings);
-        // return;
 
         $form_elements_array = array(
             array(
@@ -284,15 +296,29 @@ class SettingConfig{
         <form method="POST" id="form_settings">
             <!-- Form Elements Switcher -->
             <div class="tab-title">
-                <h1><?php esc_html_e('Form Elements', 'formit') ?></h1>
-                <legend> <?php esc_html_e('Which features do you want to enable or disable?', 'formit'); ?> </legend>
+                <h1><?php echo esc_html__('Form Elements', 'formit') ?></h1>
+                <legend> <?php echo esc_html__('Which features do you want to enable or disable?', 'formit'); ?> </legend>
             </div>
             <table class="form-table form-element-table">
                 <?php foreach($form_elements_array as $field): ?>
                 <tr>
                     <td class="option-key-col">
-                        <h3 class="option-title"><?php esc_html_e($field['label'], 'formit') ?></h3>
-                        <p class="option-desc"><?php echo esc_html__($field['desc'], 'formit'); ?></p>
+                        <h3 class="option-title">
+                            <?php 
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($field['label'])
+                                );
+                            ?>
+                        </h3>
+                        <p class="option-desc">
+                            <?php 
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($field['desc'])
+                                );
+                            ?>
+                        </p>
                     </td>
                     <td class="option-value-col">
                         <input type="checkbox" clas="option-switch" name="<?php echo $field['name'] ?>" id="<?php echo $field['name'] ?>" <?php  echo $field['value'] ? 'checked':'' ?> <?php  echo $field['disabled'] ? 'disabled': '' ?>>
@@ -307,15 +333,29 @@ class SettingConfig{
 
             <!-- Form Field Attribute Switcher -->
             <div class="tab-title">
-                <h1><?php esc_html_e('Form Attributes', 'formit') ?></h1>
-                <legend> <?php esc_html_e('Which attributes do you want to enable or disable in our form?', 'formit'); ?> </legend>
+                <h1><?php echo esc_html__('Form Attributes', 'formit') ?></h1>
+                <legend> <?php echo esc_html__('Which attributes do you want to enable or disable in our form?', 'formit'); ?> </legend>
             </div>
             <table class="form-table form-element-table">
                 <?php foreach($form_attributes_array as $field): ?>
                 <tr>
                     <td class="option-key-col">
-                        <h3 class="option-title"><?php esc_html_e($field['label'], 'formit') ?></h3>
-                        <p class="option-desc"><?php echo esc_html__($field['desc'], 'formit'); ?></p>
+                        <h3 class="option-title">
+                            <?php
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($field['label'])
+                                );
+                            ?>
+                        </h3>
+                        <p class="option-desc">
+                            <?php 
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($field['desc'])
+                                );
+                            ?>
+                        </p>
                     </td>
                     <td class="option-value-col">
                         <input type="checkbox" clas="option-switch" name="<?php echo $field['name'] ?>" id="<?php echo $field['name'] ?>" <?php echo $field['value'] ? 'checked':'' ?> <?php  echo $field['disabled'] ? 'disabled': '' ?>>
@@ -338,20 +378,25 @@ class SettingConfig{
      * @return array
      */
     function form_settings_config_data(){
-        if($this->where['id'] != null){
-        }
-        // $rows = $this->query->view_data($this->table_name, $this->where['id']);
+        if($this->where['id'] != null){ }
         $rows = $this->query->view_data($this->table_name, array('id' => $this->where['id']));
-
         $data = $rows[0]->form_settings;
         $SettingsArray = json_decode($data, true);
         if(gettype($SettingsArray) == 'string') {
             $SettingsArray = json_decode($SettingsArray, true);
         }
+
+
         return $SettingsArray;           
     }
 
-    // Function to update settings based on object elements
+    /**
+     * Function to update settings based on object elements
+     *
+     * @param [type] $pre
+     * @param [type] $new
+     * @return void
+     */
     function update_settings_data($pre, $new) {
         if(count($new) > 0) {
             foreach ($pre as $key => $value) {

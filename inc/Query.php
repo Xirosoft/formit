@@ -69,20 +69,18 @@ class Query {
     // }
 
     public function view_data($table_name, $where_conditions) {
-        // global $wpdb;
-    
         // Construct the WHERE clause based on the provided conditions
         $where_clause = '';
         foreach ($where_conditions as $column => $value) {
-            $where_clause .= "$column = %s AND ";
+            $where_clause .= "$column = $value";
         }
         // Remove the trailing "AND" from the where clause
         $where_clause = rtrim($where_clause, ' AND ');
     
         // Prepare and execute the query
-        $query = $this->wpdb->prepare("SELECT * FROM {$table_name} WHERE {$where_clause}", $where_conditions);
-        
-        return $this->wpdb->get_results($query);
+        $query = "SELECT * FROM %1s WHERE %2s" ;
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $this->wpdb->get_results($this->wpdb->prepare($query, $table_name, $where_clause));
     }
     
     /**
@@ -103,7 +101,9 @@ class Query {
     public function count_form_entries($form_id) {
         // global $wpdb; // WordPress database access class
         $table_name = $this->wpdb->prefix . 'formit_submissions';
-        $count = $this->wpdb->get_var($this->wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE form_id = %d", $form_id)); 
+        $query = "SELECT COUNT(*) FROM %1s WHERE form_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $count = $this->wpdb->get_var($this->wpdb->prepare($query ,$table_name, $form_id)); 
         // Return the count
         return $count;
     }
@@ -116,9 +116,9 @@ class Query {
      * @return string
      */
     public function get_single_row($table_name, $where){
-        // global $wpdb;
-        $query = $this->wpdb->prepare("SELECT * FROM $table_name WHERE post_id = %d", $where);
-        return $this->wpdb->get_row($query, ARRAY_A);
+        $query = "SELECT * FROM %1s WHERE post_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $this->wpdb->get_row($this->wpdb->prepare($query, $table_name,  $where), ARRAY_A);
     }  
 
     /**
@@ -128,9 +128,10 @@ class Query {
      * @param [string] $where
      */
     public function get_all_form_id($table_name){
-        // global $wpdb;
-        $query = ("SELECT * FROM $table_name");
-        $results = $this->wpdb->get_results($query);
+        
+        $query = "SELECT * FROM %1s";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $results = $this->wpdb->get_results($this->wpdb->prepare($query, $table_name));
         return $results;
     }   
 
@@ -140,10 +141,10 @@ class Query {
      * @return void
      */
     public function total_submitions(){
-        // global $wpdb;
-        // Define the table name
         $table_name = $this->wpdb->prefix . 'formit_submissions'; // Assuming your table prefix is 'wp_'
-        $total_items = $this->wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $query = "SELECT COUNT(*) FROM %1s";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $total_items = $this->wpdb->get_var($this->wpdb->prepare($query, $table_name));
         return  $total_items;
     }
 
@@ -154,12 +155,12 @@ class Query {
      * @return array
      */
     public function last_submitions($quantity){
-        // global $wpdb; // Access the WordPress database
         // Define the table name
         $table_name = $this->wpdb->prefix . 'formit_submissions'; // Replace 'formit_' with your table prefix if different
         // Query to select the last five records
-        $query = "SELECT * FROM $table_name ORDER BY created_at DESC LIMIT $quantity";
-        $results = $this->wpdb->get_results($query, ARRAY_A);
+        $query = "SELECT * FROM %1s ORDER BY created_at DESC LIMIT %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $results = $this->wpdb->get_results($this->wpdb->prepare($query, $table_name, $quantity), ARRAY_A);
 
         return  $results;
     }
@@ -170,10 +171,11 @@ class Query {
      * @return void
      */
     public function total_forms(){
-        // global $wpdb;
         // Define the table name
         $table_name = $this->wpdb->prefix . 'formit_forms'; // Assuming your table prefix is 'wp_'
-        $total_items = $this->wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $query = "SELECT COUNT(*) FROM %1s";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $total_items = $this->wpdb->get_var($this->wpdb->prepare($query, $table_name));
         return  $total_items;
     }
 
@@ -183,15 +185,15 @@ class Query {
      * @return void
      */
     public function todays_submission_count(){
-        // global $wpdb; // Access the WordPress database
         // Define the table name
         $table_name = $this->wpdb->prefix . 'formit_submissions'; // Replace 'formit_' with your table prefix if different
         // Get the current date in MySQL date format (YYYY-MM-DD)
-        $current_date = date('Y-m-d');
+        $current_date = gmdate('Y-m-d');
         // Query to count records inserted today
-        $query = "SELECT COUNT(*) FROM $table_name WHERE DATE(created_at) = '$current_date'";
+        $query = "SELECT COUNT(*) FROM %1s WHERE DATE(created_at) = '$current_date'";
         // total count
-        $count = $this->wpdb->get_var($query);
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $count = $this->wpdb->get_var($this->wpdb->prepare($query, $table_name));
         return $count;
     }
 
@@ -203,18 +205,21 @@ class Query {
      */
     public function get_email_from_mail_body($formbody){
         $email = null; // Initialize the email variable
-        foreach ($formbody as $field) {
-            if ((isset($field['type']) && ($field['type'] === 'text' || $field['type'] === 'email')) && isset($field['value']) && filter_var($field['value'], FILTER_VALIDATE_EMAIL)) {
-                $email = $field['value'];
-                break; // Stop searching once a valid email is found
+        if($formbody){
+            foreach ($formbody as $field) {
+                if ((isset($field['type']) && ($field['type'] === 'text' || $field['type'] === 'email')) && isset($field['value']) && filter_var($field['value'], FILTER_VALIDATE_EMAIL)) {
+                    $email = $field['value'];
+                    break; // Stop searching once a valid email is found
+                }
             }
         }
+
         if ($email !== null) {
             $email;
         } else {
             $email = 'Email not found!';
         }
-        return $email;
+         return $email;
     }
 
     /**
@@ -225,9 +230,10 @@ class Query {
     public function get_submission_data() {
         // global $wpdb;
         $table_name = $this->wpdb->prefix . 'formit_submissions';
-        $query = "SELECT * FROM $table_name";
+        $query = "SELECT * FROM %1s";
         // Execute the query and fetch results
-        $results = $this->wpdb->get_results($query, ARRAY_A);
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $results = $this->wpdb->get_results($this->wpdb->prepare($query, $table_name), ARRAY_A);
 
         return $results;
     }

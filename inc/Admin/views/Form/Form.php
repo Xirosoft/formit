@@ -11,6 +11,11 @@ class Form{
         add_action('wp_ajax_nopriv_from_after_submission', array($this, 'from_after_submission'));
     }
 
+    /**
+     * Get Page list function
+     *
+     * @return void
+     */
     function get_wp_pages() {
         $pages = get_pages(); // Fetch all WordPress pages
         $formatted_pages = array();
@@ -28,7 +33,8 @@ class Form{
     }
 
     function from_after_submission(){
-        $from_id = $_POST['from_id'];
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'formit-nonce' ) ) return;
+        $from_id = sanitize_text_field($_POST['from_id']);
         global $wpdb;
         $getfromSettings = new Query;
         $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'your_custom_table' with your actual table name
@@ -45,21 +51,21 @@ class Form{
         ob_start();
         ?>
         <div class="wrap">
-            <div class="form-data">
+             <div class="form-data">
                 <div class="form-data">
                     <div class="tab-header">
-                        <button type="button" class="tab-button" onclick="openTab('tab1')"><?php echo esc_attr__('Form Builder', 'formit'); ?></button>
-                        <button type="button" class="tab-button" onclick="openTab('tab3')"><?php echo esc_html__('Settings', 'formit'); ?></button>
+                        <button type="button" class="tab-button active-tab" data-tab="tab1"><?php echo esc_html__('Form Builder', 'formit'); ?></button>
+                        <button type="button" class="tab-button" data-tab="tab2"><?php echo esc_html__('Settings', 'formit'); ?></button>
                         <button type="button" class="copy_shortcode" title="Click to copy"><?php echo esc_html($shortcode); ?></button>
-                        <button type="button" class="copy_shortcode copy_shortcode_mbl" title="Click to copy"><?php echo esc_attr__('Copy', 'formit'); ?></button>
+                        <button type="button" class="copy_shortcode copy_shortcode_mbl" title="Click to copy"><?php echo esc_html__('Copy', 'formit'); ?></button>
                     </div>
-                    
-                    <div id="tab1" class="tab tab-builder">
+
+                    <div id="tab1" class="tab tab-builder active">
                         <?php 
                            new FromBuilder();
                         ?>
                     </div>
-                    <div id="tab3" class="tab">
+                    <div id="tab2" class="tab">
                     <?php 
                            new FromSettings(); 
                         ?>

@@ -1,25 +1,50 @@
-<?php 
+<?php
+
 namespace Xirosoft\Formit\API;
+
 class TrafficLocation {
 
-        public function __construct() {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
+    private $ip;
 
-        public function getLocation() {
-            // API endpoint for ip-api.com
-            $api_url = "http://ip-api.com/json/{$this->ip}";
-            
-            // Send a GET request to the API
-            $response = file_get_contents($api_url);
-            
-            if ($response) {
-                // Parse the JSON response
-                $location_data = json_decode($response);
-                return $location_data;
-            } else {
-                return false; // Unable to retrieve location data
+    public function __construct() {
+        // Retrieve the client's IP address from httpbin.org
+        $this->ip = $this->getUserIP();
+    }
+
+    private function getUserIP() {
+        // Query httpbin.org to get client's IP
+        $api_url = 'https://httpbin.org/ip';
+        $response = wp_remote_get($api_url);
+
+        if (!is_wp_error($response) && $response['response']['code'] === 200) {
+            $body = wp_remote_retrieve_body($response);
+            $location_data = json_decode($body, true);
+
+            if (isset($location_data['origin'])) {
+                return $location_data['origin'];
             }
         }
+
+        // If unable to retrieve, return a default IP
+        return '127.0.0.1';
     }
+
+    public function getLocation() {
+        // API endpoint for ip-api.com
+        $api_url = "http://ip-api.com/json/{$this->ip}";
+
+        // Send a GET request to the API using wp_remote_get
+        $response = wp_remote_get($api_url);
+
+        if (!is_wp_error($response) && $response['response']['code'] === 200) {
+            $body = wp_remote_retrieve_body($response);
+            $location_data = json_decode($body);
+
+            return $location_data;
+        } else {
+            return false; // Unable to retrieve location data
+        }
+    }
+}
+
 ?>

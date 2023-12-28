@@ -14,20 +14,20 @@ class HeaderProfileInfo{
                 <a href="<?php echo esc_url(home_url('wp-admin/profile.php')) ?>" class="info-popup__header">
                     <div class="avatar">
                         <?php
-                        $current_user = wp_get_current_user();
-                        $user_avatar = get_avatar($current_user->user_email, 64);
-                        echo $user_avatar;
+                            $current_user   = wp_get_current_user();
+                            $user_avatar    = get_avatar($current_user->user_email, 64);
+                            echo $user_avatar;
                         ?>
                     </div>
                     <div class="user">
                         <h2 class="user__name">
                             <?php
-                            echo esc_html($current_user->display_name);
+                                echo esc_html($current_user->display_name);
                             ?>
                         </h2>
                         <p class="user__email">
                             <?php
-                            echo esc_html($current_user->user_email);
+                                echo esc_html($current_user->user_email);
                             ?>
                         </p>
                     </div>
@@ -35,19 +35,19 @@ class HeaderProfileInfo{
                 <div class="info-popup__inner">
                     <a class="info-popup__link" href="<?php echo esc_url($route->page_url('settings')); ?>">
                         <i class="fi-settings"></i>
-                        <span><?php esc_html_e( 'Settings', 'formit' ) ?></span>
+                        <span><?php echo esc_html__( 'Settings', 'formit' ) ?></span>
                     </a>
                     <a class="info-popup__link" href="#">
                         <i class="dashicons dashicons-arrow-up-alt"></i>
-                        <span><?php esc_html_e( 'Upgrade', 'formit' ) ?></span>
+                        <span><?php echo esc_html__( 'Upgrade', 'formit' ) ?></span>
                     </a>
                     <a class="info-popup__link" href="#">
                         <i class="fi-docs"></i>
-                        <span><?php esc_html_e( 'Change Log', 'formit' ) ?></span>
+                        <span><?php echo esc_html__( 'Change Log', 'formit' ) ?></span>
                     </a>
                     <a class="info-popup__link" href="#">
                         <i class="fi-link"></i>
-                        <span><?php esc_html_e( 'Other Plugins', 'formit' ) ?></span>
+                        <span><?php echo esc_html__( 'Other Plugins', 'formit' ) ?></span>
                     </a>
 
                     
@@ -58,7 +58,7 @@ class HeaderProfileInfo{
                             <tbody>
                                 <tr>
                                     <th scope="row"><?php echo esc_html__('Server software', 'formit'); ?></th>
-                                    <td><?php echo esc_html($_SERVER['SERVER_SOFTWARE']); ?></td>
+                                    <td><?php echo esc_html(sanitize_text_field($_SERVER['SERVER_SOFTWARE'])); ?></td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><?php echo esc_html__('PHP version', 'formit'); ?></th>

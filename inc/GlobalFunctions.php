@@ -26,7 +26,6 @@ class GlobalFunctions {
         /**
          * Elementor addon will be active if Elementor active
          */
-        // Check if Elementor installed and activated
 		if (did_action( 'elementor/loaded' ) ) {
             add_action('elementor/widgets/widgets_registered', [$this, 'register_widgets']);	
 		}
@@ -56,7 +55,7 @@ class GlobalFunctions {
                         <img src="<?php echo esc_url( FORMIT_ASSETS_URL.'/img/logo-icon.svg') ?>" alt="formit-logo" />  
                     </a>
                     <div class="wpheader__name">
-                        <small class="wpheader_title_version"><?php echo esc_html_e( 'FORMIT-v1.0.0' ) ?> <span class="version-beta">Beta</span></small>  
+                        <small class="wpheader_title_version"><?php echo esc_html( 'FORMIT-v1.0.0' ) ?> <span class="version-beta"><?php echo esc_html__('Beta', 'formit'); ?></span></small>  
                         <h2>
                             <?php 
                                 // Check if it's the "Add New" page for the "formit" post type
@@ -70,10 +69,10 @@ class GlobalFunctions {
                     </div>
                 </div>
                 <div class="wpheader__meta">
-                    <a href="<?php echo esc_url($route->create_url()); ?>" class="wpheader__meta__icon wpheader__meta__add_new" title="<?php esc_attr_e( 'Create New Form', 'formit' ) ?>"><i class="fi-add"></i></a>
-                    <a href="<?php echo esc_url($route->page_url('docs')); ?>" class="wpheader__meta__icon wpheader__meta__docs" title="<?php esc_attr_e( 'Documentation', 'formit' ) ?>"><i class="fi-docs"></i></a>
-                    <a href="<?php echo esc_url($route->page_url('settings')); ?>" class="wpheader__meta__icon wpheader__meta__addon" title="<?php esc_attr_e( 'Settings', 'formit' ) ?>"><i class="fi-settings"></i></a>
-                    <button class="wpheader__meta__icon wpheader__meta__info" title="<?php esc_attr_e( 'Info', 'formit' ) ?>" data-popup="#info-popup"><i class="fi-info"></i></button>
+                    <a href="<?php echo esc_url($route->create_url()); ?>" class="wpheader__meta__icon wpheader__meta__add_new" title="<?php echo esc_attr__( 'Create New Form', 'formit' ) ?>"><i class="formbuilder-icon-add"></i></a>
+                    <a href="<?php echo esc_url($route->page_url('docs')); ?>" class="wpheader__meta__icon wpheader__meta__docs" title="<?php echo esc_attr__( 'Documentation', 'formit' ) ?>"><i class="formbuilder-icon-docs"></i></a>
+                    <a href="<?php echo esc_url($route->page_url('settings')); ?>" class="wpheader__meta__icon wpheader__meta__addon" title="<?php echo esc_attr__( 'Settings', 'formit' ) ?>"><i class="formbuilder-icon-settings"></i></a>
+                    <button class="wpheader__meta__icon wpheader__meta__info" title="<?php echo esc_attr__( 'Info', 'formit' ) ?>" data-popup="#info-popup"><i class="formbuilder-icon-info"></i></button>
                 </div>
             </div>
             <?php

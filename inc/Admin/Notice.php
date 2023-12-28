@@ -36,7 +36,14 @@ class Notice {
 }
 
 // Initialize the Formit_Admin_Notice class
-// Dismiss admin notice when the "Dismiss" link is clicked
-if (isset($_GET['dismiss']) && $_GET['dismiss'] === 'formit_dismissed_notice') {
+if (isset($_GET['dismiss']) && $_GET['dismiss'] === 'formit_dismissed_notice' && isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], 'formit_dismissed_notice_nonce')) {
     update_user_meta(get_current_user_id(), 'formit_dismissed_notice', true);
 }
+$dismiss_url = add_query_arg(
+    array(
+        'dismiss' => 'formit_dismissed_notice',
+        '_wpnonce' => wp_create_nonce('formit_dismissed_notice_nonce'),
+    ),
+    admin_url('your-page.php') // Replace 'your-page.php' with the appropriate URL
+);
+

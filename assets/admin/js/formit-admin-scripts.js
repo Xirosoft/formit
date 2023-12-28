@@ -1,16 +1,11 @@
 jQuery(document).ready(function ($) {
-
-    // console.log(formit_scripts_localize.Form_settings_data);
-    /**
-     * Ajax URL define
-     */
-    // var msfrom_ajaxurl = formit_scripts_localize.ajax_url
-    /**
+ 
+     /**
      * Form Builder Setting value coming from Database
      * @BuilderFormaData from this php method
      */
    
-    const demoJson = '[{\"type\":\"text\",\"required\":false,\"label\":\"Text Field\",\"className\":\"form-control\",\"name\":\"text-1695380174875-0\"},{\"type\":\"button\",\"label\":\"Button\",\"name\":\"button-1695380176384-0\"}]';
+    const demoJson = '[{\"type\":\"text\",\"required\":false,\"label\":\"Text Field\",\"className\":\"form-control\",\"name\":\"text-1695380174875-0\"},{\"type\":\"button\",\"subtype\":\"submit\",\"label\":\"Send\",\"name\":\"button-1695380176384-0\"}]';
     let formJson = formit_scripts_localize.GetBuilderJson ? formit_scripts_localize.GetBuilderJson : demoJson
     const cleanedJsonString = formJson.replace(/\\/g, '') || '';
     const FormJsonBuilder = JSON.parse(cleanedJsonString);
@@ -19,7 +14,6 @@ jQuery(document).ready(function ($) {
      * This callback using on form builder option
      * @
      */
-
     function formDataGenerator(formSelector, type='json') {
         if(typeof formSelector != 'object') return 'Selector define wrong!'
         var jsonData = formSelector.actions.getData("json");
@@ -44,8 +38,9 @@ jQuery(document).ready(function ($) {
         text: ['password'],
     }
     let fields = [
-        {label: "URL/Link", type: "text", subtype: "url", icon: "<i class='fi-link'></i> "},
-        {label: "Email", type: "text", subtype: "email", icon:"<i class='fi-mail'></i> "},
+        {label: "URL/Link", type: "text", subtype: "url", icon: "<i class='formbuilder-icon-link'></i> "},
+        {label: "Email", type: "text", subtype: "email", icon:"<i class='formbuilder-icon-mail'></i> "},
+        {label: "Time", type: "date", subtype: "time", icon:"<i class='formbuilder-icon-clock'></i> "},
     ];
     const preBuilderFields = ['autocomplete', 'button', 'checkbox-group', 'date', 'file', 'header', 'hidden', 'number', 'paragraph', 'radio-group', 'select', 'text', 'textarea', 'button'];
     const preBuilderAttrs = ['access', 'className', 'description', 'inline', 'label', 'max', 'maxlength', 'min', 'multiple', 'name', 'options', 'other', 'placeholder', 'required', 'rows', 'step', 'style', 'subtype', 'toggle', 'value'];
@@ -57,7 +52,7 @@ jQuery(document).ready(function ($) {
     // Get builder config from user's modification
     const usersBuilderConfig = formit_scripts_localize.Form_settings_data;
 
-    if (Object.keys(usersBuilderConfig).length) {
+    if (usersBuilderConfig && typeof usersBuilderConfig === 'object' && Object.keys(usersBuilderConfig).length) {
         const enableFields = [];
         const enabledAttrs = [];
 
@@ -77,14 +72,15 @@ jQuery(document).ready(function ($) {
             disabledAttrs = preBuilderAttrs.filter(field => !enabledAttrs.includes(field));
         }
     }
-
-
     var options = {
         i18n: {
             locale: 'en-US',
             location: formit_ajax_localize.plugin_url+'/assets/admin/lang/'
         },
-        enableEnhancedBootstrapGrid: false,
+        enableEnhancedBootstrapGrid: true,
+        enableColumnInsertMenu: true,
+        defaultGridColumnClass: 'col-md-12',
+        cancelGridModeDistance: 100,
         dataType: "json",
         formData: FormJsonBuilder,
         fields,
@@ -113,32 +109,14 @@ jQuery(document).ready(function ($) {
         let jsonData            = formDataGenerator(formBuilder, 'json'); // Builder Json
         var JsonUniqueLabelData = JSON.parse(jsonData); // Json Prase for Unique label
 
-
-        const labelCounts = {}; // Empty Object
-        JsonUniqueLabelData.forEach((item) => {
-            const { label } = item;
-            if (labelCounts[label] === undefined) {
-              labelCounts[label] = 1;
-            } else {
-              labelCounts[label]++;
-              item.label = `${label} ${labelCounts[label]}`;
-            }
-          });
+        console.log(JsonUniqueLabelData);
 
         var JsonUniqueLabelStringfy = JSON.stringify(JsonUniqueLabelData); // Json Stringfy 
-
-        if (typeof JsonUniqueLabelStringfy === 'string') {
-            JsonUniqueLabelStringfy = JsonUniqueLabelStringfy.replace(/"label":"([^"]*)"/g, function(match, label){
-                label = label.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim(); // Replace '\n' and multiple spaces with a single space
-                return '"label":"' + label + '"';
-            });
-        }
-
 
         $('#publishing-action .spinner').css("visibility", "visible"); // Spiner default disable 
         var formData        = $("#post").serialize(); // Form Data for  get
         var fromTemplate    = tinymce.get('mail_body').getContent();
-
+        console.log(formData);
         $.ajax({
             url: formit_ajax_localize.ajax_url, // WordPress AJAX URL
             type: 'POST',
@@ -147,22 +125,24 @@ jQuery(document).ready(function ($) {
                 formData: formData,
                 htmlData: htmlData,
                 fromTemplate: fromTemplate,
-                jsonData: JsonUniqueLabelStringfy
+                jsonData: JsonUniqueLabelStringfy,
+                nonce: formit_ajax_localize.nonce
             },
-            success: function(response) {[
-                {
-                    "formit_mail_to": "hello@xirosoft.com",
-                    "formit_sender_mail": "shahzobayer@gmail.com",
-                    "msfrom_mail_subject": "Your Subject",
-                    "formit_mail_additional_headers": "Reply-To:",
-                    "formit_mail_body": " Hi [Recipient\\'s Name], \r\n I hope you\\'re doing well. I wanted to [briefly state the purpose of your email]. [Include any necessary details or requests concisely.] [Optional: Add a closing sentence or call to action.]\r\n   \r\n                                   Best regards\r\n                                   [Your Name]                             ",
-                    "msfrom_redirect": {
-                        "msfrom_popup_message": "Thanks for Submit",
-                        "msfrom_external_url": "http:\/\/localhost\/maxon",
-                        "msfrom_internal_page": "https:\/\/xirosoft.com\/"
-                    }
-                }
-            ]
+            success: function(response) {
+                // [
+                //     {
+                //         "formit_mail_to": "hello@xirosoft.com",
+                //         "formit_sender_mail": "shahzobayer@gmail.com",
+                //         "msfrom_mail_subject": "Your Subject",
+                //         "formit_mail_additional_headers": "Reply-To:",
+                //         "formit_mail_body": " Hi [Recipient\\'s Name], \r\n I hope you\\'re doing well. I wanted to [briefly state the purpose of your email]. [Include any necessary details or requests concisely.] [Optional: Add a closing sentence or call to action.]\r\n   \r\n                                   Best regards\r\n                                   [Your Name]                             ",
+                //         "msfrom_redirect": {
+                //             "msfrom_popup_message": "Thanks for Submit",
+                //             "msfrom_external_url": "http:\/\/localhost\/maxon",
+                //             "msfrom_internal_page": "https:\/\/xirosoft.com\/"
+                //         }
+                //     }
+                // ]
                 // Check if the response is a JSON object with errors
                 console.log(response);
                 try {
@@ -238,17 +218,19 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
         // Serialize the form data
         var formData = $("#form_settings").serialize();
+        console.log(formData);
         $.ajax({
             url: formit_ajax_localize.ajax_url, // WordPress AJAX URL
             type: 'POST',
             data: {
                 action: 'form_settings_data',
-                formData: formData
+                formData: formData,
+                nonce: formit_ajax_localize.nonce
             },
             success: function(response) {
+                console.log(response);
                 showToast(response.success, "toast-success");
                 
-                console.log(response);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 showToast('Something wrong! Please check the setting options', "toast-error");
@@ -360,6 +342,7 @@ jQuery(document).ready(function ($) {
                 dataType: 'json',
                 data: {
                     action: 'get_wp_pages',
+                    nonce: formit_ajax_localize.nonce
                 },
                 success: function(response) {
                     console.log(response);
@@ -389,7 +372,8 @@ jQuery(document).ready(function ($) {
                 dataType: 'json',
                 data: {
                     action: 'from_after_submission',
-                    from_id
+                    from_id,
+                    nonce: formit_ajax_localize.nonce
                 },
                 success: function(response) {
                     if(!response) return;
@@ -420,6 +404,7 @@ jQuery(document).ready(function ($) {
             url: ajaxurl, // WordPress AJAX URL
             data: {
                 action: 'export_csv', // The WordPress AJAX action name
+                nonce: formit_ajax_localize.nonce
             },
             success: function(response) {
                 if (response) {
@@ -468,6 +453,8 @@ jQuery(document).ready(function ($) {
             data: {
                 action: 'get_submission_details',
                 submission_id: submissionId,
+                nonce: formit_ajax_localize.nonce,
+
             },
             success: function(response) {
                 // Parse the JSON response
@@ -660,7 +647,7 @@ jQuery(document).ready(function ($) {
         
 
     }
-
+ 
     
     /**
      * 
@@ -678,10 +665,14 @@ jQuery(document).ready(function ($) {
                 data: {
                     action: 'delete_single_submission',
                     submission_id: submissionId,
+                    nonce: formit_ajax_localize.nonce
                 },
                 success: function(response) {
-                    // Reload the page or update the table as needed
-                    location.reload();
+                    if(response.data.status == 400){
+                        console.log(response.data.message);
+                    }else{
+                        location.reload(); // Reload the page or update the table as needed
+                    }
                 },
             });
         }
@@ -779,6 +770,7 @@ jQuery(document).ready(function ($) {
                         data: {
                             action: 'bulk_delete_submissions',
                             submission_ids: selectedIds,
+                            nonce: formit_ajax_localize.nonce
                         },
                         success: function(response) {
                             // Reload the page or update the table as needed
@@ -966,35 +958,23 @@ jQuery(document).ready(function ($) {
             $(this).next('.doc__nav').toggleClass('active')
         })
     }
+
+    /**
+    * This Tab using on Form and from setting page.
+    * @param {} ;
+    */
+    $(".tab-button").on('click', function(){
+        var tabId = $(this).data('tab');
+        console.log(tabId);
+        $(".tab").removeClass('active');
+        $(".tab-button").removeClass('active-tab');
+        
+        $("#" + tabId).addClass('active');
+        $(this).addClass('active-tab');
+    });
+
+
 });
-
-
-
-/**
- * This Tab using on Form and from setting page.
- * @param {openTab} tabName;
- */
-function openTab(tabId) {
-    var i, tabs, tabName = document.getElementById(tabId);
-    if(!tabName) return false // error FIXED
-
-    tabs = document.getElementsByClassName("tab");
-    for (i = 0; i < tabs.length; i++) {
-        tabs[i].style.display = "none";
-    }
-    tabName.style.display = "block";
-
-    var buttons = document.getElementsByClassName("tab-button");
-    for (i = 0; i < buttons.length; i++) {
-        buttons[i].classList.remove("active-tab");
-    }
-    document
-        .querySelector("button[onclick=\"openTab('" + tabId + "')\"]")
-        .classList.add("active-tab");
-}
-
-// Show the first tab by default
-openTab("tab1");
 
 
 

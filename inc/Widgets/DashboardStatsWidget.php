@@ -26,19 +26,40 @@ function formit_dashboard_widget_stats_handler() {
 	?>
     <div class="dashboard_table">
         <div class="number__stats">
-            <a href="<?php echo esc_url(home_url('/wp-admin/edit.php?post_type=formit')); ?>" class="number__stats__single">
+            <a href="#" class="number__stats__single">
                 <img class="icon" src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/formit-forms.webp") ?>" alt="formit-stats"/> 
-                <span class="value"><?php echo esc_html__($query->total_forms(), 'formit'); ?></span>
+                <span class="value">
+                    <?php 
+                        printf(
+                            esc_html__( '%d', 'formit' ),
+                            esc_html($query->total_forms())
+                        );
+                    ?>
+                </span>
                 <span class="label"><?php echo esc_html__('Total Forms', 'formit') ?></span>
             </a>
-            <a href="<?php echo esc_url($route->page_url('submission')); ?>" class="number__stats__single">
+            <a href="#" class="number__stats__single">
                 <img class="icon" src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/formit-chart.webp") ?>" alt="formit-stats"/> 
-                <span class="value"><?php echo esc_html__($query->total_submitions(), 'formit'); ?></span>    
+                <span class="value">
+                    <?php 
+                        printf(
+                            esc_html__( '%d', 'formit' ),
+                            esc_html($query->total_submitions())
+                        );
+                    ?>
+                </span>    
                 <span class="label"><?php echo esc_html__('Total Entries', 'formit') ?></span>
             </a>
-            <a href="<?php echo esc_url($route->page_url('submission')); ?>" class="number__stats__single">
+            <a href="#" class="number__stats__single">
                 <img class="icon" src="<?php echo esc_url( FORMIT_ASSETS_URL. "img/icons/formit-calender.webp") ?>" alt="formit-stats"/> 
-                <span class="value"><?php echo esc_html__($query->todays_submission_count(), 'formit'); ?></span>    
+                <span class="value">
+                    <?php 
+                        printf(
+                            esc_html__( '%d', 'formit' ),
+                            esc_html($query->todays_submission_count())
+                        );
+                    ?>
+                </span>    
                 <span class="label"><?php echo esc_html__('Today\'s Entries', 'formit') ?></span>
             </a>
         </div>
@@ -61,7 +82,14 @@ function formit_dashboard_widget_stats_handler() {
                     $user_location = json_decode($row['user_location'], true);
                     ?>
                     <tr class="Last__five__stats__row">
-                        <td><?php echo esc_html__($row['form_title'], 'formit') ?></td>
+                        <td>
+                            <?php
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($row['form_title'])
+                                );
+                            ?>
+                        </td>
                         <td>
                             <?php
                                 $email = null; // Initialize the email variable
@@ -73,7 +101,10 @@ function formit_dashboard_widget_stats_handler() {
                                 }
 
                                 if ($email !== null) {
-                                    echo esc_html__( $email, 'formit');
+                                    printf(
+                                        esc_html__( '%s', 'formit' ),
+                                        esc_html($email)
+                                    );
                                 } else {
                                     ?>
                                     <span class='no_email'><?php echo esc_html__("Email not found!", 'formit'); ?></span>
@@ -81,22 +112,49 @@ function formit_dashboard_widget_stats_handler() {
                                 }
                             ?>
                         </td>
-                        <td><?php echo esc_html__($user_location['country'], 'formit') ?></td>
+                        <td>
+                            <?php 
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($user_location['country'])
+                                );
+                            ?>
+                        </td>
                     </tr>
                     <?php
 
                 }
             } else { ?>
-                <tr class='Last__five__stats__row'><td colspan="3" style="text-align:center"><?php echo esc_html__('No records found.', 'formit') ?></td></tr>
+                <tr class='Last__five__stats__row'>
+                    <td colspan="3" style="text-align:center">
+                        <?php echo esc_html__('No records found.', 'formit') ?>
+                    </td>
+                </tr>
             <?php  } ?>            
     
         </table>
     </div>
     <div class="t-overview__footer">
         <ul>
-            <li class="e-overview"><a href="<?php echo esc_url($route->create_url()); ?>" target="_blank"><span aria-hidden="true" class="dashicons dashicons-plus"></span><?php echo esc_html__('Create New Form', 'formit') ?>  <span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-            <li class="e-overview"><a href="<?php echo esc_url($route->page_url('docs')); ?>" target="_blank"><?php echo esc_html__('Docs', 'formit') ?> <span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-            <li class="e-overview"><a href="<?php echo esc_url($route->page_url('settings')); ?>" target="_blank"><?php echo esc_html__('Settings', 'formit') ?><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+            <li class="e-overview">
+                <a href="<?php echo esc_url($route->create_url()); ?>" target="_blank">
+                    <span aria-hidden="false" class="dashicons dashicons-plus"></span>
+                    <?php echo esc_html__('Create New Form', 'formit') ?>  
+                    <span aria-hidden="false" class="dashicons dashicons-external"></span>
+                </a>
+            </li>
+            <li class="e-overview">
+                <a href="<?php echo esc_url($route->page_url('docs')); ?>" target="_blank">
+                    <?php echo esc_html__('Docs', 'formit') ?> 
+                    <span aria-hidden="false" class="dashicons dashicons-external"></span>
+                </a>
+            </li>
+            <li class="e-overview">
+                <a href="<?php echo esc_url($route->page_url('settings')); ?>" target="_blank">
+                    <?php echo esc_html__('Settings', 'formit') ?>
+                    <span aria-hidden="false" class="dashicons dashicons-external"></span>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -108,7 +166,6 @@ function formit_dashboard_widget_stats_handler() {
 function formit_scripts( $hook ) {
 	$screen = get_current_screen();
 	if ( 'dashboard' === $screen->id ) {
-		// wp_enqueue_script( 'formit_script', plugin_dir_url( __FILE__ ) . 'path/to/script.js', array( 'jquery' ), '1.0', true );
 		wp_enqueue_style( 'formit_style',  FORMIT_ASSETS_URL . 'admin/css/formit_dashboard.css', array(), '1.0' );
 	}
  

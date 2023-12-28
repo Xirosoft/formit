@@ -12,8 +12,8 @@ namespace Xirosoft\Formit\Admin\views\Settings;
     function add_settings_submenu_page() {
         add_submenu_page(
             'edit.php?post_type=formit', // Parent menu slug
-            __('Form Settings'), // Page title
-            __('Form Settings'), // Menu title
+            __('Form Settings', 'formit'), // Page title
+            __('Form Settings', 'formit'), // Menu title
             'manage_options', // Capability required to access
             'settings', // Menu slug
             [$this, 'render_formit_builder_settings_page'] // Callback function
@@ -31,15 +31,15 @@ namespace Xirosoft\Formit\Admin\views\Settings;
                 <!-- Add your form settings HTML here -->
                 <?php if (!current_user_can('manage_options')) { var_dump('helloss'); return; } ?>
                 <div class="form-data">
-                    <button type="button" class="tab-button" onclick="openTab('tab1')"><?php echo esc_html__('Settings', 'formit'); ?></button>
-                    <button type="button" class="tab-button" onclick="openTab('tab3')"><?php echo esc_html__('System', 'formit'); ?></button>
-                    <div id="tab1" class="tab">
+                    <button type="button" class="tab-button active-tab" data-tab="tab1"><?php echo esc_html__('Settings', 'formit'); ?></button>
+                    <button type="button" class="tab-button" data-tab="tab2"><?php echo esc_html__('System', 'formit'); ?></button>
+                    <div id="tab1" class="tab active">
                         <?php 
                           $settingConfig = new SettingConfig();
                           $settingConfig->Setting_Tab(); // Call the Setting_Tab methoda();
                         ?>
                     </div>
-                    <div id="tab3" class="tab">
+                    <div id="tab2" class="tab">
                         <?php new System(); ?>
                     </div>
         

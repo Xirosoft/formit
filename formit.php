@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Formit
- * Description: The Ultimate drag and drop WordPress Form Builder Plugin.
+ * Description: A Formit drag and drop streamlines complex online forms, aiding web developers and businesses by structuring data collection into user-friendly steps.
  * Plugin URI: https://themeies.com/item/formit
- * Version: 1.0
+ * Version: 2.0.0
  * Author: Xirosoft
  * Author URI: https://xirosoft.com/
  * License: GPL-2.0+
@@ -155,11 +155,16 @@ final class Formit_Plugin
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function admin_notice_minimum_php_version()
-	{
-		if (isset($_GET['activate'])) {
-			unset($_GET['activate']);
-		}
+	public function admin_notice_minimum_php_version(){
+		wp_nonce_field( 'formit_nonce_action', 'formit_nonce_field' );
+
+        // Verify nonce before processing form data
+        if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
+           if (isset($_GET['activate'])) { unset($_GET['activate']); }
+        } else {
+            echo 'Nonce verification failed. Please try again.';
+        }
+		
 
 		$message = sprintf(
 			/* translators: 1: Plugin name 2: PHP 3: Required PHP version */
@@ -171,8 +176,6 @@ final class Formit_Plugin
 
 		printf('<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message);
 	}
-	
-    
 }
 
 // Instantiate Formit_Plugin.

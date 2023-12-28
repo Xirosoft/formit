@@ -10,12 +10,6 @@ class AddMetaBox{
     function __construct(){
         
         /**
-         * Generated Shortcode action hook wtih below method
-         * @add_shortcode_meta_box
-         */
-        // add_action('add_meta_boxes',[$this, 'add_shortcode_meta_box']);
-
-        /**
          * Save shortcode builder action hook wtih below method
          * @save_formit_builder_shortcode
          */
@@ -55,21 +49,19 @@ class AddMetaBox{
      */
     function save_formit_builder_shortcode($post_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'your_custom_table' with your actual table name
-        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE post_id = %d", $post_id);
-        $result = $wpdb->get_row($query);
-        if($result != null){
-            $shorcode_title = $result->form_title;
-        }else{
-            $shorcode_title = get_the_title($post_id);
+        $table_name = $wpdb->prefix . 'formit_forms';
+        $query = "SELECT * FROM %1s WHERE post_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $result = $wpdb->get_row($wpdb->prepare($query, $table_name, $post_id));
+        
+        if ($result !== null) {
+            $shortcode_title = $result->form_title;
+        } else {
+            $shortcode_title = get_the_title($post_id);
         }
 
-        // if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
         if ($post_id && get_post_type($post_id) === 'formit') {
-            // Generate the shortcode based on the post ID and add the 'ms-builder' prefix
-            $shortcode = '[formit id="' . esc_attr($post_id) . '"  title="' . esc_attr($shorcode_title) . '"]';
-        
-            // Update the post meta with the generated shortcode
+            $shortcode = '[formit id="' . esc_attr($post_id) . '"  title="' . esc_attr($shortcode_title) . '"]';
             update_post_meta($post_id, '_formit_builder_shortcode', $shortcode);
         }
     }
@@ -102,18 +94,17 @@ class AddMetaBox{
         $post_status     = get_post_status($post->ID); // Get 
       ?>
         <div id="publishing-action">
-            <span class="spinner"></span>	
+            <span class="spinner"></span>
             <?php
                 if ($post_status !== 'publish') {
-                    $create_from_text = __('Create From', 'formit');
-                    echo '<input name="original_publish" type="hidden" id="original_publish" value="' . esc_attr($create_from_text) . '">';
-                    echo '<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="' . esc_attr($create_from_text) . '">    ';
-                } else {
-                    $update_from_text = __('Update From', 'formit');
-                    echo '<input name="original_publish" type="hidden" id="original_publish" value="' . esc_attr($update_from_text) . '">';
-                    echo '<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="' . esc_attr($update_from_text) . '">    ';
+                    
+                    echo '<input name="original_publish" type="hidden" id="original_publish" value="Create From">';    
+                    echo '<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="Create From">	';    
+                }else{
+                    echo '<input name="original_publish" type="hidden" id="original_publish" value="Update From">';    
+                    echo '<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="Update From">	';    
                 }
-            ?>
+            ?>			
         </div>       
         <?php
         // Add your custom HTML here
@@ -125,14 +116,17 @@ class AddMetaBox{
          */
         $postIdTransfer = new AdminEnqueue(); 
         global $wpdb;
-        $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'your_custom_table' with your actual table name
-        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE post_id = %d", $post->ID);
-        $result = $wpdb->get_row($query);
-
+        $table_name = $wpdb->prefix . 'formit_forms'; 
+        $query = "SELECT * FROM %1s WHERE post_id = %d";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $result = $wpdb->get_row($wpdb->prepare($query, $table_name, $post->ID));
+     
         if ($post_status !== 'publish') {
-            $postIdTransfer->msfrom_ajax_localie();
+            $postIdTransfer->formit_ajax_localie();
         }else{
-            $postIdTransfer->BuilderFormaData($result->form_json);
+            if($result){
+                $postIdTransfer->BuilderFormaData($result->form_json);
+            }
         }
         // Add a nonce field for security
         wp_nonce_field('formit_builder_nonce', 'formit_builder_nonce_field');
@@ -147,7 +141,7 @@ class AddMetaBox{
     function save_formit_from_dom_field($post_id) {
         // Check if the request is an autosave or a nonce is not set
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-        if (!isset($_POST['formit_builder_nonce_field']) || !wp_verify_nonce($_POST['formit_builder_nonce_field'], 'formit_builder_nonce')) return;
+        if ( !isset($_POST['formit_builder_nonce_field']) || !wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_builder_nonce_field'] ) ) , 'formit_builder_nonce' ) ) return;
         if ($post_id && isset($_POST['formit_from_dom']) && isset($_POST['formit_from_json']) && current_user_can('manage_options')) {
             $formit_from_dom_value = wp_json_encode($_POST['formit_from_dom']); // Encode JSON data
             $formit_from_json_value = wp_json_encode($_POST['formit_from_json']); // Encode JSON data
@@ -161,7 +155,7 @@ class AddMetaBox{
      * Undocumented function
      *
      * @param [type] $post_id
-     * @return void
+     * 
      */
     function formit_builder_post_publish_hook($post_id) {
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
@@ -176,9 +170,21 @@ class AddMetaBox{
         
         if ('formit' == get_post_type($post_id)) {
             $status_messages_data = $insert_instance->process_form_message_submission(); 
-            $formit_settings = $insert_instance->formit_form_settings(); 
-            $formit_from_json_value = wp_json_encode($_POST['formit_from_json']); // Encode JSON data
-            $formit_from_dom_value = wp_json_encode($_POST['formit_from_dom']); // Encode JSON data
+            $formit_settings = $insert_instance->formit_form_settings($post_id); 
+            // Add nonce field to the form
+            wp_nonce_field( 'formit_nonce_action', 'formit_nonce_field' );
+
+            // Verify nonce before processing form data
+            if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
+                // Process form data here
+                $formit_from_json_value = wp_json_encode(sanitize_textarea_field($_POST['formit_from_json'])); // Encode JSON data
+                $formit_from_dom_value  = wp_json_encode(sanitize_textarea_field($_POST['formit_from_dom'] ));
+                // Add further processing logic if needed
+            } else {
+                // Nonce verification failed, handle the error or display a message
+                // For example:
+                echo 'Nonce verification failed. Please try again.';
+            }
 
             /**
              * Send to Insert Method
@@ -197,11 +203,12 @@ class AddMetaBox{
             );
 
             global $wpdb;
-            $this->table_name = $wpdb->prefix . 'formit_forms'; // Replace 'ms_form_data' with your custom table name
-            // Check if data with the same 'post_id' already exists
+            $table_name = $wpdb->prefix . 'formit_forms'; // Replace 'ms_form_data' with your custom table name
 
-            $update_query = $wpdb->prepare("SELECT * FROM {$this->table_name} WHERE post_id = %d", $post_id);
-            $existing_data = $wpdb->get_row($update_query);
+            $update_query = "SELECT * FROM %1s WHERE post_id = %d";
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $existing_data = $wpdb->get_row($wpdb->prepare($update_query, $table_name, $post_id));
+        
 
             // Debugging: Print the SQL query and existing data to help identify issues
             if ($existing_data) {
@@ -210,11 +217,11 @@ class AddMetaBox{
                     'post_id' => $post_id,
                 );
                 $insert_instance->update_data($data_to_insert, $where);
-                return 'Data updated successfully.';
+                return _e('Data updated successfully.');
             } else {
                 // Data doesn't exist, perform an insert
                 $inserted_row_id = $insert_instance->insert_data($data_to_insert);
-                return 'Data inserted successfully with ID: ' . $wpdb->insert_id;
+                return _e('Data inserted successfully with ID: ' . $wpdb->insert_id);
             }
         }     
 

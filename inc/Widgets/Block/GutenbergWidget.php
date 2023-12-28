@@ -10,16 +10,13 @@ class GutenbergWidget{
     }
 
     function formit_register_block() {
-        $localized_data = [
-           'home_url' => esc_url(home_url('/')),
-           'formList' => $this->get_formit_formlist(), // Assuming this function fetches your form list.
-       ];
+        register_block_type( __DIR__ );
 
-       // Localize the data for the block script
-       wp_localize_script('wp-block-editor', 'customData', $localized_data);
-       
-       register_block_type( __DIR__ );
-   }
+        $formit_data = array(
+            'formList' => $this->get_formit_formlist(), // Assuming this function fetches your form list.
+        );
+        wp_localize_script('block.js', 'formitData', $formit_data);
+    }
 
 
     function get_formit_formlist() {

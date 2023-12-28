@@ -127,14 +127,16 @@ class Installer{
             }
 
             dbDelta($sql);
-            $existing_data = $wpdb->get_row("SELECT * FROM $formit_submissions_table");
+            $query = "SELECT * FROM %1s";
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $existing_data = $wpdb->get_row( $wpdb->prepare($query, $formit_submissions_table));
              // Insert data into the table after creating it
             $form_settings_data = '{"form_option_checkbox":"on","form_option_date":"on","form_option_files":"on","form_option_header":"on","form_option_hidden":"on","form_option_number":"on","form_option_paragraph":"on","form_option_radio":"on","form_option_select":"on","form_option_text":"on","form_option_textarea":"on","form_attr_description":"on","form_attr_name":"on","form_attr_maxlength":"on","form_attr_style":"on","form_attr_class":"on","form_attr_label":"on","form_attr_placeholder":"on","form_attr_value":"on","form_attr_type":"on","form_attr_required":"on"}';
 
             if (!$existing_data) {
                 // Insert data if no existing data
                 $data = array(
-                    'form_settings' => json_encode($form_settings_data),
+                    'form_settings' => wp_json_encode($form_settings_data),
                     'addon_setting' => 'coming soon',
                 );
     
@@ -145,7 +147,7 @@ class Installer{
             } else {
                 // Update data if existing data is found
                 $data = array(
-                    'form_settings' => json_encode($form_settings_data),
+                    'form_settings' => wp_json_encode($form_settings_data),
                     'addon_setting' => 'coming soon',
                 );
     
@@ -169,6 +171,8 @@ class Installer{
     function is_table_exists($table_name) {
         global $wpdb;
         $get_table = $wpdb->prefix . $table_name;
-        return $wpdb->get_var("SHOW TABLES LIKE '$get_table'") == $get_table;
+        $query = "SHOW TABLES LIKE %1s";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $wpdb->get_var($wpdb->prepare($query, $get_table)) == $get_table;
     }
 }

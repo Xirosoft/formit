@@ -7,13 +7,10 @@
     var formsData = []; // Store the JSON data here
     var formsDataID = ''; // Store the JSON data here
     var formsStoreageID = localStorage.getItem('selectedFormID'); // Retrieve the selected value from local storage
-  
+    // console.log(formsStoreageID);
     var post_id;
-    var homeURL = customData.home_url;
-    var formList = customData.formList;
-    console.log(formList);
     if (formsData.length === 0) {
-        fetch(homeURL +'/wp-json/formit/v1/forms')
+        fetch('/maxon/wp-json/formit/v1/forms')
             .then(response => response.json())
             .then(data => {
                 formsData = data;
@@ -22,6 +19,7 @@
                 console.log(error);
             });
     }
+
     
     function htmlForm(id) {
         var SaveSelectData = formsData.find(function (form) {
@@ -61,21 +59,22 @@
 
     blocks.registerBlockType('formit/formit-block', {
         edit: function ({ attributes, setAttributes }) {
-            // var blockPorps = useBlockProps({className:classname});
-            var blockPorps = useBlockProps(); // Add 'wrap-area' class here
-            var blockPorpsHeading = useBlockProps({className: 'block-editor-block-card '}); // Add 'wrap-area' class here
-
+            var blockPorps = useBlockProps({className:classname});
             // Fetch the JSON data when the block is edited
             return (
                 el(
-                    'div', // I want to class name on this element
+                    'div',
                     blockPorps,
                     el(
                         InspectorControls, {},
                         el(
+                            'h2',
+                            blockPorps,
+                            'Formit Form'
+                        ),
+                        el(
                             SelectControl, {
                                 label: 'Select Form',
-                                className: 'block-editor-block-card',
                                 value: attributes.SelectControl ? attributes.SelectControl : formsStoreageID,
                                 options: formsData.map(form => ({
                                     label: form.form_title,

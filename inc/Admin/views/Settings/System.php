@@ -14,11 +14,12 @@ class System{
         <table class="form-table system-info-table">
             <?php foreach($this->get_system_info() as $key => $info): ?>
                 <tr>
-                    <th scope="row"><?php 
-                        $outputString = str_replace('_', ' ', $key);
-
-                    echo esc_html__(ucfirst($outputString), 'formit');
-                        ?></th>
+                    <th scope="row">
+                        <?php 
+                            $outputString = str_replace('_', ' ', $key);
+                            echo esc_html__(ucfirst($outputString), 'formit');
+                        ?>
+                    </th>
                     <td>
                         <?php 
                             if(is_array($info)) {
@@ -52,7 +53,7 @@ class System{
         $system_info = array();
 
         // Server information
-        $system_info['server_software'] = $_SERVER['SERVER_SOFTWARE'];
+        $system_info['server_software'] = sanitize_text_field($_SERVER['SERVER_SOFTWARE']);
         $system_info['php_version'] = phpversion();
 
         // WordPress information
@@ -61,7 +62,7 @@ class System{
         $system_info['active_plugins'] = get_option('active_plugins');
 
         // Server environment variables
-        $system_info['mysql_version'] = $GLOBALS['wpdb']->db_version();
+        $system_info['mysql_version'] = sanitize_text_field($GLOBALS['wpdb']->db_version());
         $system_info['php_memory_limit'] = ini_get('memory_limit');
         $system_info['php_max_execution_time'] = ini_get('max_execution_time');
 

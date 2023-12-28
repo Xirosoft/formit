@@ -189,19 +189,19 @@ class FormitForm extends WP_REST_Controller{
             'type' => 'object',
             'properties' => [
                 'id' => [
-                    'description' => __('Unique Identifier for the Objects.'),
+                    'description' => __('Unique Identifier for the Objects.', 'formit'),
                     'type' => 'integer',
                     'context' => ['view', 'edit'],
                     'readonly' => true,
                 ],
                 'post_id' => [
-                    'description' => __('Form Identifier for the Objects.'),
+                    'description' => __('Form Identifier for the Objects.', 'formit'),
                     'type' => 'integer',
                     'context' => ['view', 'edit'],
                     'readonly' => true,
                 ],
                 'form_title' => [
-                    'description' => __('Form Title'),
+                    'description' => __('Form Title', 'formit'),
                     'type' => 'string',
                     'context' => ['view', 'edit'],
                     'required' => true,
@@ -210,7 +210,7 @@ class FormitForm extends WP_REST_Controller{
                     ],
                 ],
                 'form_html' => [
-                    'description' => __('Form HTML dom'),
+                    'description' => __('Form HTML dom', 'formit'),
                     'type' => 'string',
                     'context' => ['view', 'edit'],
                     'readonly' => true,
@@ -220,7 +220,7 @@ class FormitForm extends WP_REST_Controller{
                     ],
                 ],
                 'date' => [
-                    'description' => __('Publish date'),
+                    'description' => __('Publish date', 'formit'),
                     'type' => 'string',
                     'format' => 'date-time',
                     'context' => ['view'],

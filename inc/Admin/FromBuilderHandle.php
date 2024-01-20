@@ -139,9 +139,13 @@ class FromBuilderHandle
         
         $htmlData       = $_POST['htmlData'];
         $fromTemplate   = $_POST['fromTemplate'];
-        $jsonData       = wp_json_encode($_POST['jsonData']); // Encode JSON data
-        $decoded_data   = urldecode($_POST['formData']);
-        parse_str($decoded_data, $formFields);
+        $jsonData       = wp_json_encode($_POST['jsonData']);
+        $raw_data       = isset($_POST['formData']) ? wp_unslash($_POST['formData']) : '';
+        $decoded_data   = urldecode($raw_data);
+
+        // Sanitize and validate the decoded data
+        $clean_data = sanitize_text_field($decoded_data);
+        parse_str($clean_data, $formFields);
           
         if (!empty($errors)) {
             // If there are errors, return them as a JSON response

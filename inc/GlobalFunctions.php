@@ -59,10 +59,13 @@ class GlobalFunctions {
                         <h2>
                             <?php 
                                 // Check if it's the "Add New" page for the "formit" post type
-                                if (isset($_GET['post_type']) && $_GET['post_type'] === 'formit' && strpos($_SERVER['REQUEST_URI'], 'post-new.php') !== false) {
+                                if (isset($_GET['post_type']) && sanitize_text_field($_GET['post_type']) === 'formit' && strpos(sanitize_url($_SERVER['REQUEST_URI']), 'post-new.php') !== false) {
                                     echo esc_html__('Create New Form', 'formit');
                                 } else {
-                                    echo esc_html__($page_title, 'formit'); 
+                                    printf(
+                                        esc_html__( '%s', 'formit' ),
+                                        esc_html($page_title)
+                                    );
                                 }
                             ?>
                         </h2>

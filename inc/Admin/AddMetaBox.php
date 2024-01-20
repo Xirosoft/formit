@@ -143,8 +143,10 @@ class AddMetaBox{
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
         if ( !isset($_POST['formit_builder_nonce_field']) || !wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_builder_nonce_field'] ) ) , 'formit_builder_nonce' ) ) return;
         if ($post_id && isset($_POST['formit_from_dom']) && isset($_POST['formit_from_json']) && current_user_can('manage_options')) {
-            $formit_from_dom_value = wp_json_encode($_POST['formit_from_dom']); // Encode JSON data
-            $formit_from_json_value = wp_json_encode($_POST['formit_from_json']); // Encode JSON data
+            // $formit_from_dom_value = wp_json_encode($_POST['formit_from_dom']); // Encode JSON data
+            // $formit_from_json_value = wp_json_encode($_POST['formit_from_json']); // Encode JSON data
+            $formit_from_dom_value = wp_json_encode(sanitize_text_field($_POST['formit_from_dom']));
+            $formit_from_json_value = wp_json_encode(sanitize_text_field($_POST['formit_from_json']));
             update_post_meta($post_id, 'formit_from_dom', $formit_from_dom_value);
             update_post_meta($post_id, 'formit_from_json', $formit_from_json_value);
         }
@@ -221,7 +223,7 @@ class AddMetaBox{
             } else {
                 // Data doesn't exist, perform an insert
                 $inserted_row_id = $insert_instance->insert_data($data_to_insert);
-                return _e('Data inserted successfully with ID: ' . $wpdb->insert_id);
+                return _e('Data inserted successfully');
             }
         }     
 

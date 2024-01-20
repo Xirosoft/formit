@@ -13,13 +13,16 @@ class Notice {
         $dismissed_notice = 'formit_dismissed_notice';
 
         if (!get_user_meta(get_current_user_id(), $dismissed_notice)) {
-            $message = __('Thank you for choice the Formit plugin! If you find it helpful, please consider leaving us a <a href="'. $route->create_url() .'">Create new form</a>.', 'formit');
             $dismiss_url = add_query_arg(array('dismiss' => $dismissed_notice), admin_url());
-
-            echo '<div class="notice notice-info is-dismissible">';
-            echo '<p>' . wp_kses_post($message) . '</p>';
-            echo '<p><a href="' . esc_url($dismiss_url) . '">' . __('Dismiss', 'formit') . '</a></p>';
-            echo '</div>';
+            ?>
+            <div class="notice notice-info is-dismissible">
+                <p>
+                    <?php echo esc_html__('Thank you for choice the Formit plugin! If you find it helpful, please consider leaving us a', 'formit') ?>
+                    <a href="<?php echo esc_url($route->create_url()); ?>"><?php echo esc_html__('Create new form', 'formit') ?></a>
+                </p>
+                <p><a href="<?php echo esc_url($dismiss_url); ?>"><?php echo esc_html__('Dismiss', 'formit') ?></a></p>
+            </div>
+            <?php 
         }
     }
 
@@ -36,7 +39,7 @@ class Notice {
 }
 
 // Initialize the Formit_Admin_Notice class
-if (isset($_GET['dismiss']) && $_GET['dismiss'] === 'formit_dismissed_notice' && isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], 'formit_dismissed_notice_nonce')) {
+if (isset($_GET['dismiss']) && sanitize_text_field($_GET['dismiss']) === 'formit_dismissed_notice' && isset($_GET['_wpnonce']) && wp_verify_nonce( sanitize_text_field(wp_unslash ($_GET['_wpnonce'])), 'formit_dismissed_notice_nonce')) {
     update_user_meta(get_current_user_id(), 'formit_dismissed_notice', true);
 }
 $dismiss_url = add_query_arg(

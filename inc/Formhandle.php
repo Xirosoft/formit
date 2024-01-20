@@ -89,12 +89,18 @@ class Formhandle{
         }
 
         global $wpdb;
-        $query      = new Query();
-        if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
-            $formData   = $_POST['data'];
-            $form_id    = $_POST['data'][0]['value']; // Form ID get
-            $post_id    = $_POST['data'][1]['value']; //post id
-            $form_name  = $_POST['data'][2]['value']; // form name
+
+        $query = new Query();
+
+        // Check for nonce and verify it
+        if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['formit_nonce_field'] ) ), 'formit_nonce_action' ) ) {
+            // Sanitize and validate form data
+            $formData  = isset( $_POST['data'] ) ? $_POST['data'] : array();
+            $form_id   = isset( $formData[0]['value'] ) ? absint( $formData[0]['value'] ) : 0; // Sanitize and validate Form ID
+            $post_id   = isset( $formData[1]['value'] ) ? absint( $formData[1]['value'] ) : 0; // Sanitize and validate post ID
+            $form_name = isset( $formData[2]['value'] ) ? sanitize_text_field( $formData[2]['value'] ) : ''; // Sanitize form name
+
+            // Further processing with sanitized and validated data
         } else {
             echo 'Nonce verification failed. Please try again.';
         }

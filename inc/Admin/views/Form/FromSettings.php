@@ -93,7 +93,7 @@ class FromSettings{
                          <td>
                             <input type="text" id="ms_email" name="formit_mail_to" value="<?php 
                                 if(empty($msg[0]->formit_mail_to)){
-                                    echo esc_attr__(sanitize_email(get_option('admin_email')), 'formit'); 
+                                    echo esc_attr(sanitize_email(get_option('admin_email'))); 
                                 }else{
                                     echo esc_attr(sanitize_email($msg[0]->formit_mail_to));
                                 }
@@ -123,7 +123,7 @@ class FromSettings{
                          <td>
                             <input type="text" id="mail_sender" name="formit_sender_mail" value="<?php 
                             if(empty($msg[0]->formit_sender_mail)){
-                                    echo esc_attr__(sanitize_email(get_option('admin_email')), 'formit'); 
+                                    echo esc_attr(sanitize_email(get_option('admin_email'))); 
                                 }else{
                                     echo esc_attr(sanitize_email($msg[0]->formit_sender_mail));
                                 }
@@ -135,7 +135,7 @@ class FromSettings{
                          <td>
                             <input type="text" id="mail_subject" name="msfrom_mail_subject" value="<?php 
                                 if(empty($msg[0]->msfrom_mail_subject)){
-                                   echo esc_attr('Your Subject', 'formit'); 
+                                   echo esc_attr__('Your Subject', 'formit'); 
                                 }else{
                                     echo esc_attr(sanitize_text_field($msg[0]->msfrom_mail_subject));
                                 }

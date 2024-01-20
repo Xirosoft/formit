@@ -23,7 +23,7 @@ class DashboardBlogWidget{
 		$options = wp_parse_args( get_option( 'formit_news_dashboard_widget_news' ), $this->formit_news_dashboard_widget_news_config_defaults() );
 		$feeds = array(
 			array(
-				'url'          => 'https://www.themeies.com/blog/feed/',
+				'url'          => 'https://www.xirosoft.com/feed/',
 				'items'        => $options['items'],
 				'show_summary' => 0,
 				'show_author'  => 0,
@@ -70,9 +70,9 @@ class DashboardBlogWidget{
         </form>
         <?php
 
-        if ( isset( $_POST['submit'] ) && isset( $_POST['formit_news_dashboard_widget_nonce_field'] ) && wp_verify_nonce( $_POST['formit_news_dashboard_widget_nonce_field'], 'formit_news_dashboard_widget_nonce' ) ) {
-            if ( isset( $_POST['rss_items'] ) && intval( $_POST['rss_items'] ) > 0 ) {
-                $options['items'] = intval( $_POST['rss_items'] );
+        if ( isset( $_POST['submit'] ) && isset( $_POST['formit_news_dashboard_widget_nonce_field'] ) && wp_verify_nonce(  sanitize_text_field(wp_unslash ($_POST['formit_news_dashboard_widget_nonce_field'])), 'formit_news_dashboard_widget_nonce' ) ) {
+            if ( isset( $_POST['rss_items'] ) && absint( $_POST['rss_items'] ) > 0 ) {
+                $options['items'] = absint( $_POST['rss_items'] );
             }
 
             update_option( 'formit_news_dashboard_widget_news', $options );

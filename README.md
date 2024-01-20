@@ -1,5 +1,7 @@
+<link rel="stylesheet" type="text/css" href="assets/admin/css/readme.css">
+
 # **Formit Builder** - drag and drop streamlines complex online forms
-<p><a href="https://themeies.com/item/formit" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/img/logo-white.svg"><img alt="Lunar" width="200" src="assets/img/logo.svg"></picture></a></p>
+![Formit Logo](assets/img/logo-white.svg)
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/xirosoft/formit/blob/master/CHANGELOG.md#v100)
 [![License](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)

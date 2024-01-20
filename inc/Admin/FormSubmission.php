@@ -70,8 +70,8 @@ class FormSubmission{
 
         // Verify nonce before processing form data
         if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
-            $per_page       = isset($_POST['items_per_page']) ? intval($_POST['items_per_page']) : $default_per_page;
-            $current_page   = isset($_GET['paged']) ? intval($_GET['paged']) : 1; // Use 'paged' query parameter for page number
+            $per_page       = isset($_POST['items_per_page']) ? absint($_POST['items_per_page']) : $default_per_page;
+            $current_page   = isset($_GET['paged']) ? absint($_GET['paged']) : 1; // Use 'paged' query parameter for page number
             // Add further processing logic if needed
         } else {
             // Nonce verification failed, handle the error or display a message
@@ -94,7 +94,7 @@ class FormSubmission{
         
         // Handle form submission to change per-page limit
         if (isset($_POST['items_per_page'])) {
-            $per_page = intval($_POST['items_per_page']);
+            $per_page = absint($_POST['items_per_page']);
             $current_page = 1; // Reset to the first page when changing per-page limit
             $offset = 0; // Reset the offset
         }
@@ -261,7 +261,7 @@ class FormSubmission{
         }
 
         // Get the submission ID from the AJAX request
-        $submission_id = intval($_POST['submission_id']);
+        $submission_id = absint($_POST['submission_id']);
     
         // Fetch submission details from the database based on $submission_id
         $submission_details = $this->get_submission_details_by_id($submission_id);
@@ -322,7 +322,7 @@ class FormSubmission{
             ));
         }
         // Get the submission IDs to delete from the AJAX request
-        $submission_ids = $_POST['submission_ids'];
+         $submission_ids = isset( $_POST['submission_ids'] ) ? sanitize_text_field(wp_unslash( $_POST['submission_ids'] )) : array();
         // Verify user capabilities (you can adjust this)
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Permission denied.'));
@@ -351,7 +351,7 @@ class FormSubmission{
         }        
 
         // Get the submission ID to delete from the AJAX request
-        $submission_id = intval($_POST['submission_id']); 
+        $submission_id = absint($_POST['submission_id']); 
         // Verify user capabilities (you can adjust this)
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Permission denied.'));

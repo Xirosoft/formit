@@ -81,14 +81,15 @@ namespace Xirosoft\Formit\Utils;
      * @return void
      */
     function getReferringPage() {
-        $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-    
+        $referrer = isset($_SERVER['HTTP_REFERER']) ? esc_url($_SERVER['HTTP_REFERER']) : '';
+
         if (!empty($referrer)) {
             return $referrer;
         } else {
-            return _e('No referrer information available.', 'formit');
+            return __('No referrer information available.', 'formit');
         }
     }
+
 
 
 }

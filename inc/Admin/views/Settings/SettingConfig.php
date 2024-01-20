@@ -47,8 +47,23 @@ class SettingConfig{
         }
         
 
-        $formData = wp_json_encode($_POST['formData']);
-        parse_str(str_replace(array("'", "\""), '', $formData), $formFields);
+        if (isset($_POST['formData'])) {
+            // Retrieve and decode the data from $_POST
+            $raw_data = wp_unslash($_POST['formData']);
+
+            // Sanitize and validate the data as needed
+            $sanitized_data = sanitize_text_field($raw_data);
+
+            // Encode the sanitized data as JSON
+            $encoded_data = wp_json_encode($sanitized_data);
+
+            // Now $encoded_data contains the sanitized and encoded data
+        } else {
+            // Handle the case where 'formData' is not set in $_POST
+            $encoded_data = wp_json_encode(array('error' => 'FormData not set.'));
+        }
+
+        parse_str(str_replace(array("'", "\""), '', $encoded_data), $formFields);
 
         // wp_send_json('Hello');
         
@@ -359,7 +374,12 @@ class SettingConfig{
                     </td>
                     <td class="option-value-col">
                         <input type="checkbox" clas="option-switch" name="<?php echo $field['name'] ?>" id="<?php echo $field['name'] ?>" <?php echo $field['value'] ? 'checked':'' ?> <?php  echo $field['disabled'] ? 'disabled': '' ?>>
-                        <label for="<?php echo esc_html__($field['name'], 'formit') ?>"></label>
+                        <label for="<?php
+                            printf(
+                                esc_html__( '%s', 'formit' ),
+                                esc_html($field['name'])
+                            );
+                         ?>"></label>
                     </td>
                 </tr>
                 <?php endforeach; ?>

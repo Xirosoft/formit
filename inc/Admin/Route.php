@@ -17,7 +17,7 @@ final class Route
         return $page_url;
     }
     public function current_url(){
-        $current_url = home_url(add_query_arg(array(), $_SERVER['REQUEST_URI']));
+        $current_url = home_url(add_query_arg(array(), sanitize_text_field($_SERVER['REQUEST_URI'])));
         return $current_url;
     }
     public function create_url(){

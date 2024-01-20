@@ -17,7 +17,7 @@ class System{
                     <th scope="row">
                         <?php 
                             $outputString = str_replace('_', ' ', $key);
-                            echo esc_html__(ucfirst($outputString), 'formit');
+                            echo ucfirst($outputString);
                         ?>
                     </th>
                     <td>
@@ -34,7 +34,10 @@ class System{
                                 }
                                 echo $sub_items;
                             } else {
-                                echo esc_html__($info, 'formit'); 
+                                printf(
+                                    esc_html__( '%s', 'formit' ),
+                                    esc_html($info)
+                                );
                             }
                         ?>
                     </td>

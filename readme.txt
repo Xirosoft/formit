@@ -103,11 +103,12 @@ This plugin is released under the GPLv2 or later license.
 
 
 == Credits == 
-Developed by Xirosft.
+
+Developed by [Xirosft](https://www.xirosoft.com).
 
 Special thanks to the creators of the following plugins for their valuable contributions:
-jQuery Form Builder - A fantastic jQuery plugin that enhances form building capabilities.
-Another External Plugin - An awesome plugin that provides additional functionalities.
+
+- [jQuery Form Builder](https://formbuilder.online/) - A fantastic jQuery plugin that enhances form building capabilities.
 
 
 == Frequently Asked Questions ==
@@ -142,6 +143,9 @@ Yes, FormIt Builder is fully compatible with Gutenberg. You can easily embed for
 
 
 == Changelog ==
+
+= 1.0.3 = 
+* Improve codebase.
 
 = 1.0.0 = 
 * Initial release- We just release our wordpress plugin.

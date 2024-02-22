@@ -1,7 +1,7 @@
 === Formit - The Ultimate drag and drop WordPress Form Builder ===
 Contributors: themeies, xirosoft, speeedsam, sofiquldev
 Donate link: https://www.paypal.com/paypalme/xirosoft
-Version: 2.0.0
+Version: 1.0.3
 Tags: WordPress Form Builder, Drag and Drop Forms, Contact Form Plugin, contact form, Survey Form Tool, forms, Quiz Form Creator, Payment Form Generator, Calculator Forms, Custom Form Builder, WordPress Form Design, Formit Plugin,
 Requires at least: 4.7
 Tested up to: 5.4

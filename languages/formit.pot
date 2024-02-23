@@ -162,66 +162,66 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:38 inc/Admin/views/Form/Form.php:52
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:38 inc/Admin/views/Form/Form.php:52
 #: inc/Admin/views/Settings/Settings.php:34 inc/GlobalFunctions.php:75
 #: inc/Widgets/DashboardStatsWidget.php:99
 msgid "Settings"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:42
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:42
 msgid "Upgrade"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:46
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:46
 msgid "Change Log"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:50
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:50
 msgid "Other Plugins"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:56
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:56
 #: inc/Admin/views/Settings/System.php:11
 msgid "System Information"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:60
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:60
 msgid "Server software"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:64
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:64
 msgid "PHP version"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:68
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:68
 msgid "WordPress version"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:72
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:72
 msgid "Theme"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:76
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:76
 msgid "MySQL version"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:82
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:82
 msgid "PHP memory limit"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:86
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:86
 msgid "PHP max execution time"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:99
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:99
 msgid "Logout"
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:102
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:102
 msgid "Powered by: "
 msgstr ""
 
-#: inc/Admin/Popup/HeaderProfileInfo.php:104
+#: inc/Admin/Popup/Formit_HeaderProfileInfo.php:104
 msgid "xirosoft"
 msgstr ""
 

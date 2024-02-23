@@ -1,0 +1,46 @@
+/* Toast Container Styles */
+#toast-container {
+    position: fixed;
+    top: 150px;
+    right: 10px;
+    z-index: 9999;
+
+    /* Toast Styles */
+    .toast {
+        position: relative;
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 16px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        padding-right: 40px;
+    }
+
+    /* Success Toast Styles */
+    .toast-success {
+        background-color: #4CAF50;
+    }
+
+    /* Error Toast Styles */
+    .toast-error {
+        background-color: #F44336;
+    }
+
+    /* Warning Toast Styles */
+    .toast-warning {
+        background-color: #FFC107;
+    }
+
+    /* Close Button Styles */
+    .close-button {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+}
+

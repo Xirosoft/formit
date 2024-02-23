@@ -1,0 +1,52 @@
+// system-info-table
+.formit_page_settings  {
+	#tab1 {
+		padding-bottom: 0;
+		#publishing-actions {
+			position: sticky;
+			bottom: 0;
+			width: calc(100% - 20px);
+			background: #fff;
+			padding: 12px 16px;
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
+}
+.system-info-table {
+	th, td {
+	padding: 10px;
+	}
+	tr {
+		&:nth-of-type(even) {
+			td, th {
+				background: rgba($primary, 0.05);
+			}
+			th {
+				border-radius: 6px 0 0 6px;
+				
+				@include respond (tabland) {
+					border-radius: 6px 6px 0 0;
+				}
+			}
+			td {
+				border-radius: 0 6px 6px 0;
+
+				@include respond (tabland) {
+					border-radius: 0 0 6px 6px;
+				}
+			}
+		}
+	}
+  	td {
+		&>span {
+			display: inline-block;
+			padding: 2px 8px 4px;
+			background-color: $primary;
+			border-radius: 4px;
+			color: $white;
+			margin-left: 4px;
+			margin-bottom: 4px;
+		}
+	}
+}

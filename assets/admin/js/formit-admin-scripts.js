@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
  
      /**
      * Form Builder Setting value coming from Database
-     * @BuilderFormaData from this php method
+     * @formit_builder_form_data from this php method
      */
    
     const demoJson = '[{\"type\":\"text\",\"required\":false,\"label\":\"Text Field\",\"className\":\"form-control\",\"name\":\"text-1695380174875-0\"},{\"type\":\"button\",\"subtype\":\"submit\",\"label\":\"Send\",\"name\":\"button-1695380176384-0\"}]';
@@ -50,7 +50,7 @@ jQuery(document).ready(function ($) {
     
     
     // Get builder config from user's modification
-    const usersBuilderConfig = formit_scripts_localize.Form_settings_data;
+    const usersBuilderConfig = formit_scripts_localize.formit_form_settings_data;
 
     if (usersBuilderConfig && typeof usersBuilderConfig === 'object' && Object.keys(usersBuilderConfig).length) {
         const enableFields = [];
@@ -121,7 +121,7 @@ jQuery(document).ready(function ($) {
             url: formit_ajax_localize.ajax_url, // WordPress AJAX URL
             type: 'POST',
             data: {
-                action: 'process_form_message_submission',
+                action: 'formit_process_form_message_submission',
                 formData: formData,
                 htmlData: htmlData,
                 fromTemplate: fromTemplate,
@@ -159,7 +159,7 @@ jQuery(document).ready(function ($) {
                         // displayErrorPopup(response.errors, 'You can updated anything again you need');
                         showToast(response.errors, "toast-error");
                     }else{
-                        goEditURL(response.home_url);
+                        // goEditURL(response.home_url);
                         // displayErrorPopup(response.success, 'You can updated anything again you need');
                         $('#publishing-action .spinner').css("visibility", "hidden");
                         showToast(response.success, "toast-success");
@@ -223,7 +223,7 @@ jQuery(document).ready(function ($) {
             url: formit_ajax_localize.ajax_url, // WordPress AJAX URL
             type: 'POST',
             data: {
-                action: 'form_settings_data',
+                action: 'formit_form_settings_data',
                 formData: formData,
                 nonce: formit_ajax_localize.nonce
             },
@@ -341,7 +341,7 @@ jQuery(document).ready(function ($) {
                 type: 'GET',
                 dataType: 'json',
                 data: {
-                    action: 'get_wp_pages',
+                    action: 'formit_get_wp_pages',
                     nonce: formit_ajax_localize.nonce
                 },
                 success: function(response) {
@@ -371,7 +371,7 @@ jQuery(document).ready(function ($) {
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    action: 'from_after_submission',
+                    action: 'formit_from_after_submission',
                     from_id,
                     nonce: formit_ajax_localize.nonce
                 },
@@ -393,17 +393,17 @@ jQuery(document).ready(function ($) {
 
 
     /**
-     * Make an AJAX request to the export_csv action
+     * Make an AJAX request to the formit_export_csv action
      */
-    $('#export_csv').click(function(e) {
+    $('#formit_export_csv').click(function(e) {
         e.preventDefault(); // Prevent the default form submission
 
-        // Make an AJAX request to the export_csv action
+        // Make an AJAX request to the formit_export_csv action
         $.ajax({
             type: 'POST',
             url: ajaxurl, // WordPress AJAX URL
             data: {
-                action: 'export_csv', // The WordPress AJAX action name
+                action: 'formit_export_csv', // The WordPress AJAX action name
                 nonce: formit_ajax_localize.nonce
             },
             success: function(response) {
@@ -451,7 +451,7 @@ jQuery(document).ready(function ($) {
             type: 'POST',
             url: formit_ajax_localize.ajax_url, // WordPress AJAX URL
             data: {
-                action: 'get_submission_details',
+                action: 'formit_get_submission_details',
                 submission_id: submissionId,
                 nonce: formit_ajax_localize.nonce,
 
@@ -663,7 +663,7 @@ jQuery(document).ready(function ($) {
                 type: 'POST',
                 url: formit_ajax_localize.ajax_url,
                 data: {
-                    action: 'delete_single_submission',
+                    action: 'formit_delete_single_submission',
                     submission_id: submissionId,
                     nonce: formit_ajax_localize.nonce
                 },
@@ -768,7 +768,7 @@ jQuery(document).ready(function ($) {
                         type: 'POST',
                         url: formit_ajax_localize.ajax_url,
                         data: {
-                            action: 'bulk_delete_submissions',
+                            action: 'formit_bulk_delete_submissions',
                             submission_ids: selectedIds,
                             nonce: formit_ajax_localize.nonce
                         },

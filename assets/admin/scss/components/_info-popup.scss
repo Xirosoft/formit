@@ -1,0 +1,192 @@
+#{$parent-class} {
+  .info-popup {
+    width: 300px;
+    height: 100vh;
+    background-color: $white;
+    border-radius: 4px;
+    box-shadow: 2px 4px 8px rgba(#000, 0.15);
+    border: 1px solid rgba($primary, 0.5);
+    position: fixed;
+    top: 80px;
+    right: 10px;
+    z-index: 999;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: top right;
+    transition: $transition;
+
+    @include respond(tabport) {
+      top: 90px;
+    }
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    &__header {
+      padding: 12px 16px;
+      background-color: lighten($primary, 35);
+      border-bottom: 1px solid rgba($primary, 0.25);
+      box-shadow: 0 4px 4px rgba($white, 0.85);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.2em;
+      text-decoration: none;
+      .avatar {
+        width: 40px;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px $primary;
+        overflow: hidden;
+        transition: $transition;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+      }
+      .user {
+        &__name {
+          font-size: 1em;
+          color: $content;
+          margin: 0;
+          transition: $transition;
+        }
+        &__email {
+          font-size: 0.9em;
+          color: lighten($content, 30);
+          margin: 0;
+        }
+      }
+
+      &:hover {
+        .avatar {
+          box-shadow: 0 0 0px 4px rgba($primary, 0.85);
+        }
+        .user__name {
+          color: $primary;
+        }
+      }
+    }
+
+    &__inner {
+      flex: 1;
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 8px;
+      overflow: hidden auto;
+    }
+    &__link {
+      // width: 100%;
+      height: 32px;;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      color: $primary;
+      border: 2px solid rgba($primary, 0.25);
+      border-radius: 8px;
+      transition: $transition;
+      i {
+        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba($primary, 0.15);
+        display: flex;
+        line-height: 1;
+        justify-content: center;
+        align-items: center;
+        transition: $transition;
+      }
+      span {
+        flex: 1;
+        line-height: 1.2;
+      }
+
+      &:hover {
+        border-color: $primary;
+        i {
+          background-color: $primary;
+          color: $white;
+        }
+      }
+    }
+
+    &__table {
+      th, td {
+        font-size: 0.9em;
+        padding: 4px 0;
+        background-color: transparent !important;
+        display: revert !important;
+        border-radius: 0;
+        border-top: 1px dashed rgba($content, 0.15);
+      }
+      th {
+        max-width: 130px;
+      }
+
+    }
+    .title {
+      margin-bottom: 8px;
+    }
+
+    &__footer {
+      margin-top: auto;
+      text-align: right;
+      padding: 4px 16px;
+      background-color: rgba($primary, 0.05);
+      border-top: 1px solid rgba($primary, 0.25);
+      box-shadow: 0 -4px 4px rgba($white, 0.85);
+      .logout {
+        text-decoration: none;
+        color: #d76721;
+        margin-right: auto;
+        font-size: 13px;
+        font-weight: 500;
+        transition: $transition;
+        &:hover {
+          color: darken(#d76721, 10)
+        }
+      }
+      p.xirosoft-credit {
+        font-size: 10px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        color: rgba($content, 0.85);
+        img {
+          height: 25px;
+          width: auto;
+        }
+      }
+    }
+
+    &.full {
+      height: calc(100vh - 90px);
+    } 
+    &.mini {
+      height: initial;
+      max-height: 400px;
+      // height: clamp(250px, 40vh, 400px);
+    }
+  }
+
+  .grid-full-width {
+    grid-column: 1 / -1;
+  }
+}

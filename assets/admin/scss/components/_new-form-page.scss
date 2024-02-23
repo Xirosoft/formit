@@ -1,0 +1,165 @@
+#{$parent-class} {
+	#poststuff {
+		padding-top: 0;
+	}
+
+	#titlediv {
+		#title-prompt-text {
+			padding: 17px;
+		}
+
+		label#title-prompt-text {
+			font-size: 1.5em;
+			padding: 15px;
+		}
+		#title {
+			padding: 8px 8px 11px 17px;
+			// padding-left: 17px;
+			font-size: 1.5em;
+			height: 48px;
+			width: 100%;
+			outline: 0;
+			margin: 0 0 3px;
+			border: 1px solid rgba($primary, 0.37);;
+			background-color: $white;
+
+			&:focus {
+				border-color: $primary;
+				outline: none;
+				box-shadow: none;
+			}
+		}
+	}
+
+	#publishing-action {
+		margin-top: 0;
+		margin-right: 5px;
+		position: absolute;
+		bottom: calc(100% + 15px);
+		right: 0;
+		display: flex;
+		align-items: center;
+
+		span.spinner {
+			margin-top: 0;
+		}
+		input#publish {
+			font-size: 18px !important;
+			padding: 5px 24px !important;
+			line-height: 1.5 !important;
+
+			@include respond (tabport) {
+				margin-bottom: -1px;
+				min-height: 32px !important;
+			}
+			@include respond (phone-mid) {
+				font-size: 16px !important;
+				padding: 5px 18px !important;
+			}
+		}
+
+		@include respond (tabport) {
+			bottom: calc(100% + 16px);
+			right: 1px;
+		}
+	}
+	.form-data {
+		.tab-header {
+			margin-top: 6px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: flex-start;
+			flex-wrap: wrap;
+		}
+	}
+
+	.tab {
+		.message-container,
+		.tab-container,
+		.form-table {
+		width: clamp(400px, 75%, 750px);
+
+		@include respond (tabland) {
+				width: 100%;
+			}
+		}
+		.form-element-table {
+			tr {
+				display: flex;
+			}
+			td {
+				vertical-align: top;
+				padding-left: 0;
+				@include respond (tabport) {
+					display: revert;
+					padding: 15px 0;
+				}
+				h3 {
+					font-size: 1.2em;
+				}
+			}
+			.option-key-col {
+				// max-width: 500px;
+				width: clamp(450px, 75%, 500px);
+			}
+			.option-value-col {
+				width: 50px;
+			}
+			.option-title {
+				margin: 0;
+				opacity: 0.85;
+			}
+			.option-desc {
+				opacity: 0.65;
+			}
+		}
+		
+		.tab-title {
+			margin-bottom: 16px;
+			h1 {
+				font-size: 2em;
+				display: block;
+			}
+		}
+	}
+	
+	.custom-dropdown {
+		.form-wrap {
+			display: flex;
+			align-items: center;
+			position: relative;
+			margin-bottom: 10px;
+			
+		}
+		label {
+			color: $label;
+			display: inline-block;
+			font-weight: $semibold;
+			white-space: nowrap;
+		}
+		select {
+			padding: 3px 10px;
+    		border: 1px solid rgba($primary, 0.37);
+			width: 100%;
+			margin-left: 8px;
+
+			&:hover {
+				color: currentColor;
+			}
+			&:focus {
+				border-color: $primary;
+				outline: none;
+				box-shadow: none;
+			}
+		}
+		.dynamic-fields {
+			textarea {
+				height: 100px;
+			}
+		}
+	}
+}
+
+
+
+

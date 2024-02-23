@@ -1,0 +1,44 @@
+@mixin pseudo($t: 0, $r: 0, $b: 0, $l: 0) {
+    content: "";
+    position: absolute;
+    top: $t;
+    left: $l;
+    right: $r;
+    bottom: $b;
+}
+
+@mixin bg-props($s: cover, $p: center top, $r: no-repeat) {
+    background-size: $s;
+    background-position: $p;
+    background-repeat: $r;
+}
+@mixin bg-overlay($t: 0, $r: 0, $b: 0, $l: 0) {
+    position: absolute;
+    content: "";
+    top: $t;
+    left: $l;
+    right: $r;
+    bottom: $b;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+@mixin flexbox($a: inherit, $jc: space-between) {
+    align-items: $a;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: $jc;
+}
+@mixin transform($t: 50%, $l: 50%) {
+    position: absolute;
+    top: $t;
+    left: $l;
+    transform: translate(-$t, -$l);
+}
+@mixin outline($property_val) {
+    &:focus, &:focus-visible, &:focus-within {
+        outline: $property_val;
+        box-shadow: $property_val;
+    }
+}

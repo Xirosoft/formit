@@ -1,0 +1,53 @@
+/******************************************/
+/* Input Field Style Start
+/******************************************/
+
+#{$parent-class} {
+	#form_settings{
+		input[type="checkbox"] {
+			display: none;
+
+			&+label {
+				width: 36px;
+				height: 18px;
+				border-radius: 99px;
+				border: 2px solid $primary;
+				display: block;
+				position: relative;
+				overflow: hidden;
+				transition: $transition;
+				opacity: 0.2;
+				filter: grayscale(1);
+				margin-top: 4px;
+				&:hover {
+					opacity: 0.5;
+				}
+				&::after {
+					content: '';
+					height: 100%;
+					aspect-ratio: 1/1;
+					border-radius: 50%;
+					background-color: $content;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-100%, -50%);
+					transition: $transition;
+				}
+			}
+			
+			&:checked+label {
+				background-color: $primary;
+				filter: grayscale(0);
+				opacity: 1;
+				&::after {
+					background-color: $white;
+					transform: translate(-2%, -50%);
+				}
+			}
+		}
+	}
+}
+/******************************************/
+/* Input Field Style End
+/******************************************/

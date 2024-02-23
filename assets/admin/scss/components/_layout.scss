@@ -1,0 +1,71 @@
+// change UI Background-color
+#{$parent-class} {
+	/* width */
+	::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: lighten($primary, 20);
+	}
+
+	#wpwrap {
+		background-color: lighten($ui_bg, 0.5);
+	}
+	.wrap {
+		margin-top: 20px;
+	}
+
+	#postbox-container-1,
+	.postbox-header {
+		display: none;
+	}
+
+	#poststuff {
+		#post-body {
+			margin-right: 0;
+		}
+		#post-body-content, .edit-form-section {
+			margin-bottom: 0;
+			#titlediv {
+			padding-bottom: 0;
+			}
+		}
+	}
+
+	//  after title box, permalink option
+	#titlediv .inside {
+		display: none;
+	}
+	.wp-heading-inline {
+		margin-top: 20px;
+	}
+
+	@include respond (tabport) {
+		#delete-action,#publishing-action {
+			line-height: 1;
+		}
+	}
+
+	// all forms list create new form and page title hide
+	.page-title-action, .wp-heading-inline, #posts-filter .search-box {
+		display: none !important;
+	}
+	// remove margin before wrap All | Published | Trash
+	.subsubsub {
+		margin: 0;
+		margin-top: -8px;
+		@include respond(phone) {
+			margin-top: 8px;
+		}
+		a {
+			padding-top: 0;
+		}
+	}
+}

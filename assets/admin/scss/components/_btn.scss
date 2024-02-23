@@ -1,0 +1,50 @@
+/******************************************/
+/* Button Style Start
+/******************************************/
+#{$parent-class} {
+	.btn {
+		padding: 8px 12px;
+		border: 1px solid rgba($primary, 0.4);
+		background-color: rgba($primary, 0.2);
+		color: $primary;
+		border-radius: 4px;
+		font-size: 15px;
+		line-height: 1;
+		font-weight: 500;
+		transition: $transition;
+		text-transform: capitalize;
+		&:hover {
+			background-color: $primary;
+			color: $white;
+		}
+	}
+
+	.button-primary {
+		background: $primary !important;
+		border: 1px solid $primary !important;
+		padding: 8px 13px !important;
+		outline: none;
+		transition: all 300ms;
+		line-height: inherit !important;
+		font-size: 14px !important;
+		font-weight: $semibold;
+
+		&:hover {
+			background: transparent !important;
+			color: $primary !important;
+			outline: none;
+			border: 1px solid $primary;
+		}
+		@include outline(none);
+	}
+	.button{
+		background: $primary !important;
+		border: 1px solid $primary !important;
+		padding: 0 10px !important;
+		color: $white;
+	}
+}
+
+/******************************************/
+/* Button Style End
+/******************************************/

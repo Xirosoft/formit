@@ -1,0 +1,19 @@
+html {
+  scroll-behavior: smooth;
+}
+article[id]::before {
+  content: '';
+  display: block;
+  height: 20px;
+  margin: -30px 0 0;
+}
+#{$parent-class} {
+  .container {
+    max-width: 1280px;
+    margin: auto;
+    
+    @include respond(xl) {
+      max-width: 1280px;
+    } 
+  }
+}

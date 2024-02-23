@@ -1,0 +1,576 @@
+#{$parent-class} {
+
+    /*********************************
+/* Sidebar Start
+*********************************/
+    .sidebar {
+        background: $white;
+        width: 220px;
+        height: 100vh;
+        box-shadow: 0px 14px 40px 0px #73737326;
+        z-index: 99999;
+        overflow-y: auto;
+        position: relative;
+        padding: 15px;
+        border-radius: 8px;
+
+        &__menu {
+            margin: 0;
+
+            li {
+                position: relative;
+                list-style: none;
+                padding: 10px 15px;
+                background: rgba($primary, 0.17);
+                border-radius: 5px;
+                transition: $transition;
+
+                a {
+                    font-size: 16px;
+                    font-weight: $medium;
+                    color: $primary;
+                    display: block;
+                    line-height: 24px;
+                    text-transform: capitalize;
+                    transition: $transition;
+                    position: relative;
+                    text-decoration: none;
+
+                    &:focus {
+                        box-shadow: none;
+                        outline: none;
+                    }
+                }
+
+                &:hover,
+                &.active {
+                    background: $primary;
+
+                    a {
+                        color: $white;
+
+                        &::after {
+                            color: $primary !important;
+                        }
+                    }
+                }
+
+                &:last-child a {
+                    margin-right: 0;
+                }
+
+                &.has__dropdown {
+                    a {
+                        position: relative;
+
+                        &::after {
+                            content: "\f078";
+                            font-family: "Font Awesome 5 Free";
+                            font-weight: 900;
+                            font-size: 11px;
+                            color: $content;
+                            transition: all 0.3s linear;
+                            position: absolute;
+                            right: 0;
+                            // height: 100%;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    }
+                }
+
+                .sub__menu {
+                    position: relative;
+                    background: $white;
+                    z-index: 99;
+                    padding-left: 16px;
+                    margin-top: 8px;
+                    display: none;
+                    // opacity: 0;
+                    // visibility: hidden;
+                    // transition: $transition;
+
+                    li {
+                        // margin-bottom: 10px;
+                        padding: 0;
+                        border: none;
+
+                        &:last-of-type {
+                            margin-bottom: 0;
+                        }
+
+                        a {
+                            padding: 7px 0;
+                            font-size: 14px;
+                            line-height: 20px;
+
+                            font-weight: $medium;
+                            color: $content;
+                            // border-bottom: 1px dashed #d9d9d9;
+                            width: 100%;
+                            display: block;
+                            position: relative;
+                            z-index: 1;
+
+                            &::after {
+                                display: none;
+                            }
+
+                            &:hover,
+                            &.active {
+                                color: $primary;
+                            }
+                        }
+
+                        &:last-child a {
+                            border: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*********************************
+/* Sidebar Menu End
+*********************************/
+
+    .support__wrapper {
+        display: flex;
+        align-items: start;
+        gap: 30px;
+    }
+
+    .sidebar__body {
+        background: $white;
+        width: calc(100% - 220px);
+        height: 100vh;
+        box-shadow: 0px 14px 40px 0px #73737326;
+        z-index: 99999;
+        overflow-y: auto;
+        position: relative;
+        padding: 30px;
+        border-radius: 8px;
+
+        .main__title {
+            font-size: 42px;
+            font-weight: $bold !important;
+            color: $heading;
+        }
+
+        .sidebar__inner {
+            .title {
+                margin-bottom: 15px;
+                font-size: 18px;
+                padding: 10px 15px;
+            }
+
+            .desc {
+                font-size: 16px;
+                color: $label;
+                font-weight: $regular;
+                margin-top: 0;
+                margin-bottom: 8px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+
+
+
+
+    /*************
+********************/
+    .support__wrap {
+        max-width: 720px;
+        margin: auto;
+        text-align: center;
+        margin-bottom: 50px;
+        padding-top: 40px;
+
+        .heading__box {
+            margin-bottom: 30px;
+
+            .title {
+                font-size: 32px;
+                font-weight: $bold;
+                color: $heading;
+
+                &-logo {
+                    max-width: 160px;
+                    margin: auto;
+                }
+            }
+
+            p {
+                margin-top: 20px;
+                font-size: 16px;
+                color: $label;
+                margin-bottom: 0;
+            }
+
+        }
+    }
+
+    .features {
+        &__title {
+            font-size: 20px;
+            color: $heading;
+            text-align: center;
+        }
+
+        &__inner {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 20px;
+            border-radius: 8px;
+        }
+
+        &__item {
+            padding: 12px;
+            box-shadow: 0 0 4px rgba($primary, 0.17);
+        }
+    }
+
+    .doc {
+        &__wrapper {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: flex-start;
+            gap: 100px;
+
+            @include respond(tabland) {
+                gap: 65px;
+            } 
+            @include respond(tabport) {
+                gap: 30px;
+            } 
+
+            p {
+                font-size: 16px;
+            }
+            h2, h4 {
+                display: inline-block;
+                font-size: 24px;
+                background-color: transparent;
+                padding: 0;
+                text-decoration: underline;
+                text-underline-offset: 4px;
+                margin-top: 50px;
+                position: relative;
+                cursor: pointer;
+                &::after {
+                    content: 'formbuilder-icon-hash';
+                    font-family: "formbuilder-icons" !important;
+                    font-size: 0.8em;
+                    position: absolute;
+                    right: 0;
+                    top: 2px;
+                    transform: translateX(150%);
+                    opacity: 0;
+                    transition: $transition
+                }
+
+                &:hover {
+                    &::after {
+                        opacity: 0.75;
+                    }
+                }
+            }
+            h4 {
+                text-decoration: none;
+                font-size: 20px;
+                margin-top: 16px;
+                margin-bottom: 0;
+                color: $heading;
+            }
+            ul {
+                list-style: square;
+                padding-left: 16px;
+            }
+            b {
+                font-weight: 500;
+                color: $primary;
+            }
+            .steps {
+                list-style: none;
+                padding: 0 8px;
+                border-left: 2px solid rgba($primary, 0.25);
+                transition: $transition;
+                &:hover {
+                    border-color: $primary;
+                }
+                p {
+                    margin: 4px 0;
+                }
+            }
+            kbd {
+                background-color: $primary;
+                color: $white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                margin: 0 4px;
+                cursor: pointer;
+                transition: $transition;
+                &:hover {
+                    background-color: darken($primary, 30);
+                }
+            }
+        }
+        &__image {
+            display: block;
+            width: 90%;
+            margin: 16px 0;
+            border-radius: 8px;
+            border: 4px solid rgba($primary, 0.25);
+            overflow: hidden;
+        }
+
+        &__sidebar {
+            position: sticky;
+            top: 100px;
+            @include respond(tabport) {
+                top: 110px;
+            }
+
+            .doc-table-of-contact-toggoler {
+                display: inline-block;
+                width: 43px;
+                aspect-ratio: 1/1;
+                font-size: 25px;
+                border: 0;
+                background-color: $primary;
+                border-radius: 8px;
+                color: #fff;
+                transition: $transition;
+                cursor: pointer;
+                display: none;
+                @include respond(phone) {
+                    display: block;
+                    margin-left: auto;
+                }
+                &:hover {
+                    background-color: darken($primary, 30);
+                }
+            }
+        }
+        &__nav {
+            ul {
+                list-style: none;
+            }
+            @include respond(phone) {
+                min-width: max-content;
+                background-color: $white;
+                padding: 16px 25px 16px 8px;
+                border-radius: 8px;
+                box-shadow: -2px 2px 12px rgba(#000, 0.25);
+                position: absolute;
+                right: 0;
+                top: 42px;
+                transform-origin: top right;
+                transform: scale(0);
+                opacity: 0;
+                visibility: hidden;
+                transition: $transition;
+                &.active {
+                    transform: scale(1);
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+            &__title {
+                font-size: 16px;
+                font-weight: 600;
+                border-bottom: 1px solid $primary;
+                padding-bottom: 10px;
+                margin: 0;
+            }
+            li {
+                a {
+                    text-decoration: none;
+                    padding: 4px;
+                    transition: $transition;
+                    border-left: 2px solid rgba($primary, 0.0);
+                    &:hover {
+                        color: $primary;
+                    }
+                    &:focus, &:focus-visible {
+                        outline: none;
+                        box-shadow: none;
+                    }
+                    &.active {
+                        transform: translateX(12px);
+                        border-left: 2px solid rgba($primary, 0.7);
+                        color: $primary;
+                        font-weight: 600;
+                    }
+                }
+                ul {
+                    padding-left: 8px;
+                    padding-top: 8px;
+                    li>a {
+                        padding-left: 20px;
+                        border-left: 2px solid rgba($primary, 0.17);
+                    }
+                }
+            }
+        }
+
+        &__main {
+            flex: 1;
+            margin-top: -45px;
+        }
+
+        &__title {
+            &__main {
+                font-size: 32px;
+                text-align: center;
+                margin-top: 100px;
+            }
+        }
+    }
+
+    .support__form {
+        position: relative;
+        width: 100%;
+
+        .form-control {
+            font-size: 16px;
+            border: 1px solid;
+            width: 100%;
+            border-radius: 50px;
+            padding: 10px 25px;
+            border: 1px solid rgba($primary, 0.37);
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+
+        .submit-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 0;
+
+            background: rgba($primary, 1);
+            font-weight: 500;
+            padding: 17px 32px;
+            border-radius: 30px;
+            font-size: 16px;
+            color: $white;
+            border: none;
+            cursor: pointer;
+            transition: $transition;
+
+            &.active-tab,
+            &:hover {
+                background: $primary;
+                color: $white;
+            }
+        }
+    }
+
+
+
+
+
+    .support__main {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin: auto;
+
+        @include respond (xl) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @include respond (tabland) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include respond (phone) {
+            grid-template-columns: auto;
+        }
+
+        &.sm {
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 1024px;
+
+            @include respond (xl) {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            @include respond (tabland) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @include respond (phone) {
+                grid-template-columns: auto;
+            }
+        }
+    }
+
+    .cardBox {
+        background: $white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 5px 12px rgba(126, 142, 177, 0.2);
+        display: flex;
+        align-items: center;
+
+        @include respond (xl) {
+            padding: 30px 20px;
+        }
+
+        .icon {
+            margin-right: 15px;
+        }
+
+        .card__content {
+            h3 {
+                margin: 0;
+
+                a {
+                    font-size: 20px;
+                    color: $heading;
+                    display: block;
+                    text-decoration: none;
+                    margin-bottom: 15px;
+                    transition: $transition;
+                    text-transform: capitalize;
+
+                    &:hover,
+                    &:focus {
+                        box-shadow: none;
+                        color: $primary;
+                    }
+                }
+            }
+
+            .desc {
+                font-size: 16px;
+                color: $label;
+                margin: 0;
+                font-weight: $regular;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .btn {
+                display: inline-block;
+                margin-top: 15px;
+                text-decoration: none;
+            }
+        }
+    }
+}

@@ -1,11 +1,11 @@
 === Formit - The Ultimate drag and drop WordPress Form Builder ===
 Contributors: themeies, xirosoft, speeedsam, sofiquldev
 Donate link: https://www.paypal.com/paypalme/xirosoft
-Version: 2.0.0
 Tags: WordPress Form Builder, Drag and Drop Forms, Contact Form Plugin, contact form, Survey Form Tool, forms, Quiz Form Creator, Payment Form Generator, Calculator Forms, Custom Form Builder, WordPress Form Design, Formit Plugin,
 Requires at least: 4.7
-Tested up to: 5.4
+Tested up to: 6.0
 Requires PHP: 5.6
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,7 @@ Special thanks to the creators of the following plugins for their valuable contr
 - [www.maps.google.com](https://maps.google.com) - Showing google map location with iframe
 - [www.xirosoft.com](https://www.xirosoft.com/feed/) - Daily newsfeed XML provider 
 
+
 == Frequently Asked Questions ==
 
 = Q1 How do I add a new form using FormIt Builder? =
@@ -145,9 +146,6 @@ Yes, FormIt Builder is fully compatible with Gutenberg. You can easily embed for
 
 
 == Changelog ==
-
-= 2.0.0 = 
-* Improve codebase.
 
 = 1.0.0 = 
 * Initial release- We just release our wordpress plugin.

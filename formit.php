@@ -3,7 +3,9 @@
  * Plugin Name: Formit
  * Description: A Formit drag and drop streamlines complex online forms, aiding web developers and businesses by structuring data collection into user-friendly steps.
  * Plugin URI: https://themeies.com/item/formit
- * Version: 2.0.0
+ * Version: 2.1.0
+ * Requires at least: 6.0
+ * Requires PHP: 5.6
  * Author: Xirosoft
  * Author URI: https://xirosoft.com/
  * License: GPL-2.0+
@@ -54,8 +56,7 @@ final class Formit_Plugin
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function __construct()
-	{
+	public function __construct(){
 		/**
 		 * define constatns
 		 */
@@ -79,8 +80,7 @@ final class Formit_Plugin
 	 * @since 1.2.0
 	 * @access public
 	 */
-	public function i18n()
-	{
+	public function i18n(){
 		load_plugin_textdomain('formit');
 	}
 
@@ -96,23 +96,22 @@ final class Formit_Plugin
 	 * @since 1.2.0
 	 * @access public
 	 */
-	public function init()
-	{
+	public function init(){
 		/**
 		 * Global function Innitial
 		 */
-		new Xirosoft\Formit\GlobalFunctions(); 
-		new Xirosoft\Formit\API(); 
-		new Xirosoft\Formit\Frontend\ShortCode(); 
+		new Xirosoft\Formit\Formit_GlobalFunctions(); 
+		new Xirosoft\Formit\Formit_API(); 
+		new Xirosoft\Formit\Frontend\Formit_ShortCode(); 
 		/**
 		 * checking admin or frontend 
 		 */
 		if ( is_admin() ) {
 			// Enqueue all admin styles and scripts
-			new Xirosoft\Formit\AdminPanel(); 
+			new Xirosoft\Formit\Formit_AdminPanel(); 
 		}else{
 			// Manege All fontend functionility
-			new Xirosoft\Formit\FrotnendPanel();
+			new Xirosoft\Formit\Formit_FrotnendPanel();
 		}
 
 	}
@@ -122,8 +121,7 @@ final class Formit_Plugin
 	 *
 	 * @return void
 	 */
-	public function define_constants()
-	{
+	public function define_constants(){
 		define('FORMIT_VERSION', self::version);
 		define('FORMIT__FILE__', __FILE__);
 		define('FORMIT_PLUGIN_BASE', plugin_basename(FORMIT__FILE__));
@@ -142,7 +140,7 @@ final class Formit_Plugin
 	 * @return void
 	 */
 	public function activate(){
-		$installer = new Xirosoft\Formit\Installer(); 
+		$installer = new Xirosoft\Formit\Formit_Installer(); 
 		$installer->run();
 		
 	}
@@ -162,7 +160,7 @@ final class Formit_Plugin
         if ( ! isset( $_POST['formit_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['formit_nonce_field'] ) ) , 'formit_nonce_action' ) ){
            if (isset($_GET['activate'])) { unset($_GET['activate']); }
         } else {
-            echo 'Nonce verification failed. Please try again.';
+            echo esc_html__('Nonce verification failed. Please try again.', 'formit');
         }
 		
 
@@ -179,8 +177,4 @@ final class Formit_Plugin
 }
 
 // Instantiate Formit_Plugin.
-new Formit_Plugin();
-
-
-
-?>
+new Formit_Plugin(); 

@@ -1,0 +1,144 @@
+@import 'base/formit-icon';
+@import 'base/variables';
+
+#formit_news_dashboard_widget_news {
+  .t-overview__footer {
+    li {
+      display: inline-block;
+      margin-right: 8px;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+
+#formit_dashboard_widget_news {
+  .inside {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.dashboard_table {
+  .number__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    &__single {
+      padding: 16px;
+      display: grid;
+      gap: 8px 12px;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto 1fr;
+      border-bottom: 1px solid rgba($primary, 0.1);
+      transition: $transition;
+      text-decoration: none;
+      color: $content;
+
+      &:nth-last-of-type() {
+        border-bottom: none;
+      }
+
+      .icon {
+        width: 36px;
+      }
+
+      .value {
+        font-size: 2.5em;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .label {
+        grid-column: 1/-1;
+        font-size: 1.1em;
+        line-height: 1;
+        color: rgba($content, 0.85)
+      }
+
+      &:hover {
+        background-color: rgba($primary, 0.1);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .last__five__stats {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      background-color: rgba($primary, 0.1);
+    }
+
+    th,
+    td {
+      padding: 4px 8px;
+      border: 1px solid rgba($primary, 0.1);
+      transition: $transition;
+      text-align: left;
+
+      &:first-of-type {
+        padding-left: 16px;
+        border-left: 0;
+      }
+
+      &:last-of-type {
+        padding-right: 16px;
+        border-right: 0;
+      }
+    }
+
+    tr {
+      &:hover {
+
+        td,
+        th {
+          background-color: rgba($primary, 0.2);
+        }
+      }
+    }
+  }
+
+  &+.t-overview__footer {
+    // border-top: 1px solid rgba($content, 0.25);
+    padding: 0 12px;
+
+    ul {
+      margin-bottom: 8px;
+
+      li {
+        display: inline-block;
+        margin-right: 8px;
+
+        a {
+          color: $primary;
+          transition: $transition;
+
+          span {
+            &:last-of-type {
+              opacity: 0.5;
+              font-size: 1em;
+              margin-left: -4px;
+            }
+          }
+
+          &:hover {
+            color: darken($primary, 20);
+          }
+        }
+
+        &:nth-last-of-type() {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}

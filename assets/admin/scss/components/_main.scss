@@ -1,0 +1,440 @@
+/******************************************/
+/* Main Style Here
+/******************************************/
+#{$parent-class} {
+    .tab {
+        display: none;
+    }
+
+    .wrap {
+        h1 {
+            padding: 0;
+            font-weight: 500;
+            margin-bottom: 10px;
+
+            @include respond (phone) {
+                // padding: 10px 0 0;
+                font-size: 20px;
+            }
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 0;
+            background: rgba($primary, 0.17);
+            display: inline-block;
+            line-height: 100%;
+            padding: 10px;
+            color: $primary;
+        }
+
+        .heading-inline {
+            margin-bottom: 10px;
+        }
+
+        .flex-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba($primary, 0.17);
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+
+            h1 {
+                line-height: 100%;
+            }
+
+            .version {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0;
+                line-height: 100%;
+            }
+        }
+
+        .form-data {
+            .wrap {
+                .form-data {
+                    padding: 0;
+                    // border-top: 1px solid rgba($primary, 0.17);
+                    border-radius: 0;
+                }
+            }
+        }
+
+        .wrap {
+            margin: 0;
+        }
+    }
+
+
+    /* Style Tab Button */
+    .tab {
+        border: 1px solid rgba(126, 85, 216, 0.17);
+        background: $white;
+        padding: 15px;
+        border-radius: 8px;
+
+        &-button {
+            background: rgba($primary, 0.17);
+            font-weight: 500;
+            padding: 8px 17px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: $primary;
+            border: 1px solid rgba($primary, 0.37);
+            margin: 0px 3px 10px 0;
+            cursor: pointer;
+            transition: $transition;
+
+            &.active-tab,
+            &:hover {
+                background: $primary;
+                color: $white;
+            }
+        }
+
+        &.active{
+            display: block;
+        }
+    }
+
+    .form-wrap label {
+        color: $label;
+    }
+
+    .form-table {
+        // border-top: 1px solid rgba(126, 85, 216, 0.17);
+        margin-top: 0;
+
+        th {
+            color: $label;
+        }
+
+        textarea,
+        input {
+            width: 60%;
+            padding: 3px 10px;
+            border: 1px solid rgba($primary, 0.37);
+
+            @media (max-width: 991px) {
+                width: 100%;
+            }
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+
+    .mailsender-form {
+        textarea,
+        input {
+            width: 100%;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: initial;
+        }
+
+        p {
+            input {
+                width: 20px;
+                height: 20px;
+            }
+
+            input[type=checkbox]:checked::before {
+                margin: -2px;
+            }
+        }
+    }
+
+
+    .form-group {
+        // border-top: 1px solid rgba(126, 85, 216, 0.17);
+        margin-top: 15px;
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #383838;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 3px 10px;
+            border: 1px solid rgba($primary, 0.37);
+
+            &[type="radio"],
+            &[type="checkbox"] {
+                width: initial;
+            }
+
+            @media (max-width: 991px) {
+                width: 100%;
+            }
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+
+    /* Button Design */
+
+    #poststuff .inside {
+        margin: 0;
+    }
+
+    .postbox .inside {
+        padding: 0;
+    }
+
+    #titlediv div.inside {
+        margin: 0;
+        height: 10px;
+    }
+
+    #formit_builder_shortcode.postbox .inside {
+        padding: 0 12px 12px !important;
+    }
+
+    .postbox-header {
+        background: rgba($primary, 0.17);
+
+        h2 {
+            background: transparent;
+        }
+    }
+
+    .postbox {
+        background: transparent;
+        border-color: transparent;
+
+        .handle-order-higher,
+        .handle-order-lower {
+            color: $primary;
+        }
+    }
+
+    .toggle-indicator {
+        color: $primary;
+    }
+
+    /* Addons Style */
+    span.formit_addonbundle_subtitle {
+        font-size: 14px;
+        font-weight: $regular;
+        margin-bottom: 10px;
+        display: block;
+        line-height: initial;
+    }
+
+    .formit-flex {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px 30px;
+
+        @media (max-width: 1440px) {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px 20px;
+        }
+
+        @media (max-width: 575px) {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px 20px;
+        }
+
+        @media (max-width: 374px) {
+            grid-template-columns: repeat(1, 1fr);
+            gap: 20px;
+        }
+
+        .formitadoncontainer {
+            border: 1px solid rgba($primary, 0.37);
+            border-radius: 8px;
+            position: relative;
+            height: 130px;
+            padding: 15px;
+
+            @include respond (medium) {
+                height: 110px;
+            }
+
+            @include respond (tabport) {
+                height: 80px;
+            }
+
+            @include respond (phone) {
+                padding: 10px;
+            }
+
+            img {
+                border: none;
+                max-width: 80%;
+                margin: auto;
+                display: block;
+
+                @include respond (tabport) {
+                    max-width: 100%;
+                }
+            }
+
+            .formitadoncontainersubdiv {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                height: 100%;
+                width: 100%;
+            }
+
+            .formitaddonbuttonddiv {
+                position: absolute;
+                bottom: -8px;
+                box-shadow: 0px 0px 0px 3px $white;
+            }
+
+            .formitaddonbtn {
+                background: $primary;
+                color: $white;
+                border: 1px solid $primary;
+                padding: 10px 20px;
+                outline: none;
+                transition: all 300ms;
+                line-height: inherit;
+                font-size: 14px;
+                font-weight: $semibold;
+                text-decoration: none;
+                text-transform: uppercase;
+                border-radius: 8px;
+
+                &:focus,
+                &:hover {
+                    background: $white;
+                    color: $primary;
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                @include respond (tabport) {
+                    font-size: 11px;
+                    padding: 5px 12px;
+                }
+
+                @include respond (phone-sm) {
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+
+    .button-disable {
+        border: 1px solid #999999 !important;
+        background-color: rgb(229, 229, 229) !important;
+        color: #666666 !important;
+        cursor: not-allowed;
+    }
+
+    /******************************************/
+    /* All Style Here
+/******************************************/
+
+    .wrap .page-title-action {
+        border-color: $primary;
+        color: $primary;
+        padding: 6px 14px;
+
+        @include respond (phone-xm) {
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        &:hover {
+            background: rgba($primary, 0.10);
+            color: $primary;
+            border-color: currentColor;
+        }
+
+        &:focus {
+            box-shadow: none;
+            outline: none;
+            border-color: currentColor;
+        }
+    }
+
+    .wp-core-ui {
+        .button {
+            border-color: $primary;
+            color: $primary;
+
+            &:hover {
+                background: rgba($primary, 0.10);
+                color: $primary;
+                border-color: currentColor;
+            }
+
+            &:focus {
+                box-shadow: none;
+                outline: none;
+                border-color: currentColor;
+            }
+
+            &-primary {
+                color: $white;
+            }
+        }
+
+        select {
+            border-color: $primary;
+
+
+            &:focus,
+            &:hover {
+                color: $primary;
+                border-color: currentColor;
+                box-shadow: none;
+            }
+        }
+    }
+
+    .subsubsub li a {
+        color: $primary;
+
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+    }
+
+    .widefat {
+        a {
+            color: $primary;
+
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+
+        th {
+            font-weight: $medium;
+            color: $primary !important;
+        }
+    }
+
+
+    .alternate,
+    .striped>tbody>:nth-child(odd),
+    ul.striped>:nth-child(odd) {
+        background: rgba($primary, 0.17);
+    }
+
+}

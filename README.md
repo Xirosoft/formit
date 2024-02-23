@@ -3,7 +3,7 @@
 # **Formit Builder** - drag and drop streamlines complex online forms
 ![Formit Logo](assets/img/logo-white.svg)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/xirosoft/formit/blob/master/CHANGELOG.md#v100)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)]([https://github.com/xirosoft/formit/blob/master/CHANGELOG.md#v100](https://github.com/Xirosoft/formit/blob/main/CHANGELOG.md#v2.1.0))
 [![License](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Build Status](https://img.shields.io/travis/xirosoft/formit/master.svg)](https://travis-ci.org/xirosoft/formit)
 ![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/weforms)
@@ -181,13 +181,13 @@ This plugin is released under the [GPLv2 or later](https://www.gnu.org/licenses/
 
 For more details, see the [full changelog](CHANGELOG.md).
 
-## Credits
+== Credits == 
 
-Developed by [Xirosft](https://www.xirosoft.com).
-
-![Xirosoft Logo](assets/img/xirosoft.webp)
+Developed by [Xirosoft](https://www.xirosoft.com).
 
 Special thanks to the creators of the following plugins for their valuable contributions:
 
 - [jQuery Form Builder](https://formbuilder.online/) - A fantastic jQuery plugin that enhances form building capabilities.
-- [Another External Plugin](link_to_external_plugin) - An awesome plugin that provides additional functionalities.
+- [www.ipify.org](https://www.ipify.org) - A Simple Public IP Address API
+- [www.maps.google.com](https://maps.google.com) - Showing google map location with iframe
+- [www.xirosoft.com](https://www.xirosoft.com/feed/) - Daily newsfeed XML provider 

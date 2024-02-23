@@ -175,13 +175,17 @@ This plugin is released under the [GPLv2 or later](https://www.gnu.org/licenses/
 
 ## Changelog
 
+### [Version 2.1.0](./CHANGELOG.md#v2.1.0)
+- Sequrity Update
+- Improve Codebase
+
 ### [Version 1.0.0](./CHANGELOG.md#v100)
 
 - **Initial release-** We just release our wordpress plugin.
 
 For more details, see the [full changelog](CHANGELOG.md).
 
-== Credits == 
+## Credits 
 
 Developed by [Xirosoft](https://www.xirosoft.com).
 
